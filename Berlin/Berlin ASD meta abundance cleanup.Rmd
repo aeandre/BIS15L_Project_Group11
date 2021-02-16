@@ -15,9 +15,6 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r}
-getwd()
-```
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
@@ -26,7 +23,22 @@ library(naniar)
 ``` 
 
 ```{r}
-asd_meta_abundance <- read_csv(here("ASD meta abundance 2.csv"))
+asd <- read_csv(here("ASD meta abundance 2.csv"))
+```
+```{r}
+asd
+```
+
+```{r}
+glimpse(asd)
+```
+```{r}
+summary(asd)
 ```
 
 
+```{r}
+names(asd)
+```
+
+I have yet to really dive into this, but this data set seems to just have characters.
