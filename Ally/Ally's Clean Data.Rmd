@@ -1,0 +1,57 @@
+---
+title: "Ally's Clean data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+``` 
+
+## Load the Data
+```{r message=FALSE, warning=FALSE}
+asd <- readr::read_csv("ASD_meta_abundance_2.csv")
+asd
+```
+
+
+## Tidying the Data
+```{r}
+asd_tidy <- asd %>% 
+  pivot_longer(-Taxonomy, 
+               names_to = "subject", 
+               values_to = "abundance") %>% 
+  separate(subject, into = c("group", "number"), sep = 1)
+asd_tidy
+```
+
+
+## Remove unidentified bacteria
+```{r}
+asd_tidy2 <- asd_tidy %>% 
+  filter(str_detect(Taxonomy, "Unclassified") == FALSE)
+asd_tidy2
+```
+
+## Break it into an ASD and TD groups
+```{r}
+asd_group <-
+  asd_tidy2 %>% 
+  filter(group == "A")
+asd_group
+```
+
+```{r}
+td_group <-
+  asd_tidy2 %>% 
+  filter(group == "B")
+td_group
+```
+
