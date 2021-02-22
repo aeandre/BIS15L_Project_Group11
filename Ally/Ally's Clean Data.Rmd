@@ -47,20 +47,23 @@ asd_tidy3 <-
   separate(Taxonomy, into = c("genus", "species"), sep = ";")
 ```
 
-## Tidy up the species and genus columns
+## Tidy up the species and genus and number columns
 ```{r}
 asd_tidy4 <-
   asd_tidy3 %>% 
   separate(genus, into = c("g", "genus"), sep = "__") %>% 
   separate(species, into = c("s", "species"), sep = "__") %>% 
-  select( -g, -s)
+  select( -g, -s) %>% 
+  rename(id = "number")
 asd_tidy4
 ```
 
-## Make genus and species into factors
+
+## Make genus and species and id into factors
 ```{r}
 asd_tidy4$genus <- as.factor(asd_tidy4$genus)
 asd_tidy4$species <- as.factor(asd_tidy4$species)
+asd_tidy4$id <- as.factor(asd_tidy4$id)
 ```
 
 
@@ -81,15 +84,54 @@ td_group
 
 ## Preliminary Analysis of TD and ASD groups
 ```{r}
-td_group %>% 
+td_diversity <- td_group %>% 
   filter(abundance != 0) %>% 
   summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
+td_diversity
 ```
 
 ```{r}
+asd_diversity <-
 asd_group %>% 
   filter(abundance != 0) %>% 
   summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
+asd_diversity
+```
+Note: The ASD Group has greater diversity than the TD group. 
+
+## Plot the diversity of the ASD vs TD groups
+```{r}
+group <- c("td", "asd")
+microbiome_diversity <-
+  full_join(td_diversity, asd_diversity) %>% 
+  cbind(group) %>% 
+  select(group, n_genus, n_species)
+microbiome_diversity
 ```
 
+Here is the genus diversity:
+```{r}
+microbiome_diversity %>% 
+  ggplot(aes(x = group, y = n_genus, fill = group)) +
+  geom_col() +
+  theme_linedraw() +
+  labs(title = "Number of Genera per Group",
+       x = "Group",
+       y = "Number of Genera") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) +
+  scale_fill_brewer(palette = "Set1")
+```
+
+Here is the species diversity:
+```{r}
+microbiome_diversity %>% 
+  ggplot(aes(x = group, y = n_species, fill = group)) +
+  geom_col() +
+  theme_linedraw() +
+  labs(title = "Number of Species per Group",
+       x = "Group",
+       y = "Number of Species") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) +
+  scale_fill_brewer(palette = "Set1")
+```
 
