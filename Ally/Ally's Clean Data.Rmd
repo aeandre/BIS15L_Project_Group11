@@ -91,5 +91,21 @@ asd_group %>%
   filter(abundance != 0) %>% 
   summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
 ```
+```{r}
+getwd()
+```
 
+
+## Exporting CSVs
+```{r}
+write.csv(asd_tidy4, file = "microbiome.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(td_group, file = "td_group.csv", row.names = FALSE)
+```
 
