@@ -97,6 +97,7 @@ asd_group %>%
   summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
 asd_diversity
 ```
+<<<<<<< HEAD
 Note: The ASD Group has greater diversity than the TD group. 
 
 ## Plot the diversity of the ASD vs TD groups
@@ -133,5 +134,23 @@ microbiome_diversity %>%
        y = "Number of Species") +
   theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) +
   scale_fill_brewer(palette = "Set1")
+=======
+```{r}
+getwd()
+```
+
+
+## Exporting CSVs
+```{r}
+write.csv(asd_tidy4, file = "microbiome.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(td_group, file = "td_group.csv", row.names = FALSE)
+>>>>>>> c55958c48b46b82ba90ce51fed413e8c84dde90b
 ```
 
