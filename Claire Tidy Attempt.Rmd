@@ -1,0 +1,58 @@
+---
+title: "Tidy Attempt"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+getwd()
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+```
+
+
+```{r}
+asd_microbiome <- read_csv(here("ASD meta abundance 2.csv"))
+```
+
+```{r}
+asd_microbiome <- janitor::clean_names(asd_microbiome)
+```
+
+
+```{r}
+names(asd_microbiome)
+```
+```{r}
+asd_microbiome
+```
+
+
+```{r}
+sub("g__", "", asd_microbiome$taxonomy)
+asd_microbiome 
+```
+
+```{r}
+asd_microbiome_longer <- asd_microbiome %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")
+asd_microbiome_longer
+```
+```{r}
+asd_microbiome_tidy <- asd_microbiome_longer %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";")
+asd_microbiome_tidy
+```
+
+
+
