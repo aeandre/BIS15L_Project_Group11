@@ -40,18 +40,39 @@ asd_tidy2 <- asd_tidy %>%
 asd_tidy2
 ```
 
+## Tidy up the Taxonomy column
+```{r}
+asd_tidy3 <- 
+  asd_tidy2 %>% 
+  separate(Taxonomy, into = c("genus", "species"), sep = ";")
+```
+
+## Tidy up the species and genus columns
+```{r}
+asd_tidy4 <-
+  asd_tidy3 %>% 
+  separate(genus, into = c("g", "genus"), sep = "__") %>% 
+  separate(species, into = c("s", "species"), sep = "__") %>% 
+  select( -g, -s)
+asd_tidy4
+```
+
+
 ## Break it into an ASD and TD groups
 ```{r}
 asd_group <-
-  asd_tidy2 %>% 
+  asd_tidy4 %>% 
   filter(group == "A")
 asd_group
 ```
 
 ```{r}
 td_group <-
-  asd_tidy2 %>% 
+  asd_tidy4 %>% 
   filter(group == "B")
 td_group
+```
+```{r}
+
 ```
 
