@@ -57,6 +57,12 @@ asd_tidy4 <-
 asd_tidy4
 ```
 
+## Make genus and species into factors
+```{r}
+asd_tidy4$genus <- as.factor(asd_tidy4$genus)
+asd_tidy4$species <- as.factor(asd_tidy4$species)
+```
+
 
 ## Break it into an ASD and TD groups
 ```{r}
@@ -72,7 +78,18 @@ td_group <-
   filter(group == "B")
 td_group
 ```
-```{r}
 
+## Preliminary Analysis of TD and ASD groups
+```{r}
+td_group %>% 
+  filter(abundance != 0) %>% 
+  summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
 ```
+
+```{r}
+asd_group %>% 
+  filter(abundance != 0) %>% 
+  summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
+```
+
 
