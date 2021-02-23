@@ -71,14 +71,14 @@ asd_tidy4$id <- as.factor(asd_tidy4$id)
 ```{r}
 asd_group <-
   asd_tidy4 %>% 
-  filter(group == "A")
+  filter(group == "B")
 asd_group
 ```
 
 ```{r}
 td_group <-
   asd_tidy4 %>% 
-  filter(group == "B")
+  filter(group == "A")
 td_group
 ```
 
