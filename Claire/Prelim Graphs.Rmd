@@ -26,25 +26,43 @@ microbiome <- readr::read_csv(here("tidy_data", "microbiome.csv"))
 names(microbiome)
 ```
 ```{r}
-table(microbiome$group)
-````
+view(microbiome)
+```
 
 
+### Number of individuals in each group
 ```{r}
 microbiome %>% 
-  ggplot(aes(x = group)) + 
-  geom_bar() 
+  group_by(group, number) %>% 
+  count() %>% 
+  ggplot(aes(x= group, fill = group))+
+  geom_bar()+ 
+  scale_fill_brewer(palette = "Accent")+
+  labs(title = "Number of Individuals in Each Group", x = "Group", y = "Count")
+```
+
+### Number of observations in each group
+```{r}
+microbiome %>% 
+  ggplot(aes(x = group, fill = group)) + 
+  geom_bar()+ 
+  scale_fill_brewer(palette = "Accent")+
+  labs(title = "Number of Observations in Each Group", x = "Group", y = "Count") 
 ```
 ```{r}
 microbiome %>% 
-  select(group, genus) %>% 
+  select(group, genus, abundance) %>% 
   filter(group == "B", abundance > 1000) %>% 
   summarise(genera = n_distinct(genus))
 ```
 
-
+### Most Frequent Genera
 ```{r}
 microbiome %>% 
-  ggplot(aes(x =))
+  select(group, genus, abundance) %>% 
+  filter(group == "B", abundance > 1000) %>%  
+  ggplot(aes(x = genus, y = abundance))+
+  geom_col()+ 
+  coord_flip()
 ```
 
