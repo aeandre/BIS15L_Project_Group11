@@ -15,10 +15,36 @@ library(here)
 
 ```{r}
 getwd()
+options(scipen=999)
 ```
 
 
 ```{r}
-microbiome <- readr::read_csv(here(""))
+microbiome <- readr::read_csv(here("tidy_data", "microbiome.csv"))
+```
+```{r}
+names(microbiome)
+```
+```{r}
+table(microbiome$group)
+````
+
+
+```{r}
+microbiome %>% 
+  ggplot(aes(x = group)) + 
+  geom_bar() 
+```
+```{r}
+microbiome %>% 
+  select(group, genus) %>% 
+  filter(group == "B", abundance > 1000) %>% 
+  summarise(genera = n_distinct(genus))
+```
+
+
+```{r}
+microbiome %>% 
+  ggplot(aes(x =))
 ```
 
