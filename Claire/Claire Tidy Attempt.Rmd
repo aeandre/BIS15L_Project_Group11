@@ -21,7 +21,7 @@ library(naniar)
 
 
 ```{r}
-asd_microbiome <- read_csv(here("ASD meta abundance 2.csv"))
+asd_microbiome <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
 ```
 
 ```{r}
@@ -36,29 +36,38 @@ names(asd_microbiome)
 asd_microbiome
 ```
 
-
+#### pivoting longer and taking out unclassified data
 ```{r}
 asd_microbiome_longer <- asd_microbiome %>% 
   pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
   filter(str_detect(taxonomy, "Unclassified") == FALSE)
 asd_microbiome_longer
 ```
+#### separating genus and species
 ```{r}
-## not perfect species names
-asd_microbiome_tidy <- asd_microbiome_longer %>% 
-  separate(condition, into = c("condition", "patient_id"), sep = 1) %>% 
-  separate(taxonomy, into = c("trash", "species"), sep = "s__") %>% 
-  separate(species, into = c("genus", "species"), sep = " ")
-  #separate(genus, into = c("trash", "genus"), sep = "__") %>% 
-  #separate(species, into = c("trash", "species"), sep = "__")
-asd_microbiome_tidy
-view(asd_microbiome_tidy)
-```
-```{r}
-asd_microbiome_tidiest <- asd_microbiome_tidy %>% 
-  select(-trash)
-asd_microbiome_tidiest
+asd_microbiome_tidy_strains <- asd_microbiome_tidy %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ")
+view(asd_microbiome_tidy_strains)
 ```
 
+#### getting rid of extra genus and making a culture column
+```{r}
+asd_microbiome_tidy3 <- asd_microbiome_tidy_strains %>% 
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus) %>% 
+  filter(species != "sp.")
+view(asd_microbiome_tidy3)
+```
+#### finding unknown species
+```{r}
+asd_microbiome_tidy4 <- asd_microbiome_tidy3 %>% 
+  mutate(species = ifelse(species == genus, NA, species))
+asd_microbiome_tidy4
+```
 
+#### write
+```{r}
+write.csv(asd_microbiome_tidy4, file = "tidiermicrobiome.csv", row.names = FALSE)
+```
 
