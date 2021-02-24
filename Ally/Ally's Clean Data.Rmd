@@ -98,7 +98,7 @@ asd_group %>%
 asd_diversity
 ```
 <<<<<<< HEAD
-Note: The ASD Group has greater diversity than the TD group. 
+Note: The TD Group has greater diversity than the ASD group. 
 
 ## Plot the diversity of the ASD vs TD groups
 ```{r}
@@ -147,6 +147,5 @@ write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
 
 ```{r}
 write.csv(td_group, file = "td_group.csv", row.names = FALSE)
->>>>>>> c55958c48b46b82ba90ce51fed413e8c84dde90b
 ```
 
