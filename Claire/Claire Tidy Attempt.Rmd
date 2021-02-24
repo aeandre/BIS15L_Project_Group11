@@ -51,19 +51,19 @@ view(asd_microbiome_tidy_strains)
 ```
 
 #### getting rid of extra genus and making a culture column
+why does strain disappear??
 ```{r}
 asd_microbiome_tidy3 <- asd_microbiome_tidy_strains %>% 
   separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
   mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
-  select(- extra_genus) %>% 
-  filter(species != "sp.")
+  select(- extra_genus)
 view(asd_microbiome_tidy3)
 ```
 #### finding unknown species
 ```{r}
 asd_microbiome_tidy4 <- asd_microbiome_tidy3 %>% 
   mutate(species = ifelse(species == genus, NA, species))
-asd_microbiome_tidy4
+view(asd_microbiome_tidy4)
 ```
 
 #### write
