@@ -1,0 +1,78 @@
+---
+title: "Venn Diagram"
+author: "Allison Andre"
+date: "2/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+library(ggvenn)
+``` 
+
+## Load the Data
+```{r}
+tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv")
+tidier_microbiome
+```
+```{r}
+asd_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/groups_tidier/asd_group_tidier.csv")
+asd_tidier
+```
+
+```{r}
+td_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/groups_tidier/td_group_tidier.csv")
+td_tidier
+```
+
+## Prepare data for Venn diagram
+```{r}
+td_venn <-
+  td_tidier %>% 
+  rename(genus_td = "genus") %>% 
+  filter(abundance != 0) %>% 
+  select(genus_td, patient_id)
+```
+
+```{r}
+asd_venn <-
+  asd_tidier %>% 
+  rename(genus_asd = "genus") %>% 
+  filter(abundance != 0)
+```
+
+```{r}
+both_venn <- full_join(td_venn, asd_venn, by = "patient_id")
+both_venn
+```
+
+```{r}
+both_venn$genus_td <- as.factor(both_venn$genus_td)
+both_venn$genus_asd <- as.factor(both_venn$genus_asd)
+```
+
+
+## Build Venn Diagram
+
+```{r}
+venn_data <- list(
+  "TD Genera" = both_venn$genus_td,
+  "ASD Genera" = both_venn$genus_asd
+)
+```
+
+
+```{r}
+ggvenn(venn_data, fill_color = c("plum1", "lightblue"))
+```
+
+
+

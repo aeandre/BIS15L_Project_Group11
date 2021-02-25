@@ -149,3 +149,32 @@ write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
 write.csv(td_group, file = "td_group.csv", row.names = FALSE)
 ```
 
+## Splitting up Claire's tidy Data
+```{r}
+tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv")
+tidier_microbiome
+```
+
+
+```{r}
+asd_group_tidier <- 
+  tidier_microbiome %>% 
+  filter(condition =="b")
+asd_group_tidier
+```
+
+```{r}
+td_group_tidier <-
+  tidier_microbiome %>% 
+  filter(condition == "a")
+td_group_tidier
+```
+
+```{r}
+write.csv(td_group_tidier, file = "td_group_tidier.csv", row.names = FALSE)
+```
+
+
+```{r}
+write.csv(asd_group_tidier, file = "asd_group_tidier.csv", row.names = FALSE)
+```
