@@ -90,7 +90,12 @@ anyNA(venn_data)
 
 
 ```{r}
-venn.diagram(venn_data, category.names = c("TD Genera", "ASD Genera"), filename = 'cool_venn.png', output = T, imagetype = "png", height = 480. width = 480, resolution = 300, compression = "lzw")
+grid.newpage()
+draw.pairwise.venn(area1 = 1264,                      
+                   area2 = 1101,
+                   cross.area = 1068, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("TD Genera", "ASD Genera"))
 ```
 
 
