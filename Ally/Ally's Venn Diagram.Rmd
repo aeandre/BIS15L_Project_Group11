@@ -16,6 +16,7 @@ library(janitor)
 library(here)
 library(naniar)
 library(ggvenn)
+library(VennDiagram)
 ``` 
 
 ## Load the Data
@@ -59,20 +60,59 @@ both_venn$genus_td <- as.factor(both_venn$genus_td)
 both_venn$genus_asd <- as.factor(both_venn$genus_asd)
 ```
 
+```{r}
+both_venn2 <- 
+  both_venn %>% 
+  filter(genus_td != "NA" | genus_asd != "NA")
+```
+
 
 ## Build Venn Diagram
 
 ```{r}
 venn_data <- list(
-  "TD Genera" = both_venn$genus_td,
-  "ASD Genera" = both_venn$genus_asd
+  "TD Genera" = both_venn2$genus_td,
+  "ASD Genera" = both_venn2$genus_asd
 )
 ```
 
 
+
 ```{r}
-ggvenn(venn_data, fill_color = c("plum1", "lightblue"))
+ggvenn(venn_data, fill_color = c("yellow", "turquoise1"))
 ```
 
+## Try to build a COOLER venn diagram
+
+```{r}
+anyNA(venn_data)
+```
+
+
+```{r}
+venn.diagram(venn_data, category.names = c("TD Genera", "ASD Genera"), filename = 'cool_venn.png', output = T, imagetype = "png", height = 480. width = 480, resolution = 300, compression = "lzw")
+```
+
+
+## Bargraphs of number of genera unique to each group
+
+```{r}
+unique_names <- c("TD group", "ASD Group")
+unique_counts <- c(196, 33)
+unique_genera <- data_frame(unique_names, unique_counts)
+unique_genera
+```
+
+```{r}
+unique_genera %>% 
+  ggplot(aes(x = unique_names, y = unique_counts, fill = unique_names)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Genera Per Group",
+       x = NULL,
+       y = "Unique Genera") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
 
 
