@@ -178,3 +178,27 @@ write.csv(td_group_tidier, file = "td_group_tidier.csv", row.names = FALSE)
 ```{r}
 write.csv(asd_group_tidier, file = "asd_group_tidier.csv", row.names = FALSE)
 ```
+
+
+##Tidy Demographics Info
+
+```{r}
+demographics <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/untidy_data/demographics.csv")
+demographics
+```
+
+```{r}
+demographics2 <-
+  demographics %>% 
+  clean_names() %>% 
+  filter(metagenomic_sequencing == "Yes") %>% 
+  select(sample_id, gender, age)
+demographics2
+```
+
+
+```{r}
+write.csv(demographics2, file = "demographics_tidy.csv", row.names = FALSE)
+```
+
+
