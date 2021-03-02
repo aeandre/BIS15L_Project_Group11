@@ -43,28 +43,40 @@ asd_microbiome_longer <- asd_microbiome %>%
   filter(str_detect(taxonomy, "Unclassified") == FALSE)
 asd_microbiome_longer
 ```
-#### separating genus and species
+
+#### wrangling the taxonomy column into genus, species, strain
 ```{r}
-asd_microbiome_tidy_strains <- asd_microbiome_tidy %>% 
-  separate(species, into = c("species", "strain"), sep = " sp. ")
-view(asd_microbiome_tidy_strains)
+asd_microbiome_tidy <- asd_microbiome_longer %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ")
+asd_microbiome_tidy
 ```
 
-#### getting rid of extra genus and making a culture column
-why does strain disappear??
+
+#### getting rid of extra genus/g and making a culture column
+
 ```{r}
-asd_microbiome_tidy3 <- asd_microbiome_tidy_strains %>% 
-  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+asd_microbiome_tidy3 <- asd_microbiome_tidy %>% 
   mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
-  select(- extra_genus)
-view(asd_microbiome_tidy3)
+  select(- extra_genus, - trash)
+asd_microbiome_tidy3
 ```
+
 #### finding unknown species
 ```{r}
 asd_microbiome_tidy4 <- asd_microbiome_tidy3 %>% 
   mutate(species = ifelse(species == genus, NA, species))
 view(asd_microbiome_tidy4)
 ```
+
+```{r}
+asd_microbiome_tidy4 %>% 
+  filter(species == "copri")
+```
+
 
 #### write
 ```{r}

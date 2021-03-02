@@ -1,0 +1,128 @@
+---
+title: "Microbiome HeatMap"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+```{r}
+microbiome_untidy <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
+```
+```{r}
+microbiome_untidy <- janitor::clean_names(microbiome_untidy)
+```
+
+```{r}
+microbiome_untidy_longer <- microbiome_untidy %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1)
+view(microbiome_untidy_longer)
+```
+
+```{r}
+microbiome_untidy_wider <- microbiome_untidy_longer %>% 
+  pivot_wider(names_from = "condition", values_from = "abundance")
+microbiome_untidy_wider
+```
+
+```{r}
+microbiome_difference <- microbiome_untidy_wider %>% 
+  mutate(difference = abs(a-b))
+```
+
+```{r}
+microbiome_big_diff <- microbiome_difference %>% 
+  filter(difference != "NA") %>% 
+  arrange(desc(difference)) %>% 
+  top_n(100)
+microbiome_big_diff
+```
+
+#### tidy taxonomy like I did for the main CSV
+```{r}
+tidy_microbiome_big_diff <- microbiome_big_diff %>% 
+  select(-difference) %>% 
+  pivot_longer(c("a", "b"), names_to = "condition", values_to = "abundance") %>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash) %>% 
+  mutate(species = ifelse(species == genus, NA, species)) 
+tidy_microbiome_big_diff
+```
+
+```{r}
+tidy_microbiome_big_diff %>% 
+  select(genus, abundance, condition) %>% 
+  group_by(genus, condition) %>%
+  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(mean_abundance)) %>% 
+  ggplot(aes(x = reorder(genus, mean_abundance) , y = condition))+
+  geom_tile(aes(fill = mean_abundance))+
+  coord_flip()+
+  theme_minimal()+
+  labs(title = "Relative Abundance of Biggest Difference Genera", x = "Condition", y = "Genera")+
+  scale_fill_gradient2(low = "cadetblue4", mid = "cadetblue2", high = "azure2", midpoint = 3000)
+```
+
+
+```{r}
+microbiome <- readr::read_csv(here("tidy_data", "tidiermicrobiome.csv"))
+```
+
+```{r}
+microbiome %>%
+  select(genus, abundance, condition) %>% 
+  group_by(genus, condition) %>%
+  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(mean_abundance)) %>% 
+  filter(mean_abundance > 100) %>% 
+  ggplot(aes(x = genus, y = condition))+
+  geom_tile(aes(fill = mean_abundance))
+```
+
+```{r}
+my_col <- c("navy", "blue", "green", "yellow")
+```
+
+
+```{r}
+microbiome %>%
+  select(genus, abundance, condition) %>% 
+  group_by(genus, condition) %>%
+  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(mean_abundance)) %>% 
+  filter(mean_abundance > 100) %>% 
+  ggplot(aes(x = genus, y = condition))+
+  geom_raster(aes(fill = mean_abundance))+
+  scale_fill_gradientn(colors = my_col)+
+  coord_flip()
+```
+
+Want to find the genera that have the biggest difference between a and b groups
+
+```{r}
+microbiome_wide <- microbiome %>% 
+  filter(species != "NA") %>% 
+  pivot_wider(names_from = "condition", values_from = "abundance", values_fn = length)
+microbiome_wide %>% 
+  filter(a == 2 | b ==2)
+```
+
+```{r}
+microbiome %>% 
+  filter(genus == "Prevotella", patient_id == 2)
+```
+
