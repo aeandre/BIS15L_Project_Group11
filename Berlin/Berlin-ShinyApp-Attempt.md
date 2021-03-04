@@ -5,9 +5,7 @@ output:
     keep_md: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 ## R Markdown
 
@@ -15,7 +13,8 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r message=FALSE, warning=FALSE}
+
+```r
 library(tidyverse)
 library(janitor)
 library(here)
@@ -26,22 +25,96 @@ library(shiny)
 library(shinydashboard)
 library(trekcolors)
 library(ggplot2)
-``` 
+```
 
-```{r}
+
+```r
 getwd()
 ```
 
+```
+## [1] "/Users/Astrobeecal/Desktop/GitHub/BIS15L_Project_Group11/Berlin"
+```
 
-```{r}
+
+
+```r
 microbiome <- read_csv(here("Berlin/a_ref_microbiome.csv"))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   genus = col_character(),
+##   species = col_character(),
+##   group = col_character(),
+##   id = col_double(),
+##   abundance = col_double()
+## )
+```
+
+```r
 asd_group <- read_csv(here("Berlin/a_ref_asd_group.csv"))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   genus = col_character(),
+##   species = col_character(),
+##   group = col_character(),
+##   id = col_double(),
+##   abundance = col_double()
+## )
+```
+
+```r
 td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   genus = col_character(),
+##   species = col_character(),
+##   group = col_character(),
+##   id = col_double(),
+##   abundance = col_double()
+## )
+```
+
+```r
 microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   group = col_character(),
+##   n_genus = col_double(),
+##   n_species = col_double()
+## )
+```
+
+```r
 unique_genera <- read_csv(here("Berlin/unique_genera.csv"))
 ```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   unique_names = col_character(),
+##   unique_counts = col_double()
+## )
+```
 Graphs Comparing TD and ASD Groups
-```{r, eval=F, echo=T}
+
+```r
 ui <- fluidPage(    
   
   titlePanel("TD and ASD Species/Genus Abundance"), 
@@ -69,7 +142,8 @@ shinyApp(ui, server)
 
 
 Graphs comparing Genus, Species, and Unique Counts
-```{r, eval=F, echo=T}
+
+```r
 ui <- dashboardPage(
   dashboardHeader(title = "Abundance"),
   dashboardSidebar(),

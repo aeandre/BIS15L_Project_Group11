@@ -18,10 +18,6 @@ date: "2/24/2021"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## Load the libraries
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
@@ -102,11 +98,6 @@ ggvenn(ref_venn_data, fill_color = c("yellow", "turquoise1"))
 ```
 
 ## Try to build a COOLER venn diagram
-
-```{r}
-anyNA(ref_venn_data)
-```
-
 
 ```{r}
 grid.newpage()
