@@ -27,6 +27,60 @@ library(ggplot2)
 ``` 
 
 ```{r}
-asd_graph <- read_csv(here("Berlin/asd_hopefully_tidy.csv"))
+getwd()
 ```
 
+
+```{r}
+microbiome <- read_csv(here("Berlin/a_ref_microbiome.csv"))
+asd_group <- read_csv(here("Berlin/a_ref_asd_group.csv"))
+td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
+microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
+```
+Graphs Comparing TD and ASD Groups
+```{r, eval=F, echo=T}
+ui <- fluidPage(    
+  
+  titlePanel("TD and ASD Species/Genus Abundance"), 
+  sidebarLayout(      
+  sidebarPanel(
+  selectInput("genus", "species", " Select Group of Interest:", choices=unique(microbiome_diversity$group)),
+      hr(),
+      helpText("Reference: Zhou Dan et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329")
+    ),
+    mainPanel(
+      plotOutput("Plot")  
+    )
+    )
+    )
+server <- function(input, output, session) {
+  session$onSessionEnded(stopApp)
+  output$Plot <- renderPlot({
+  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + theme(plot.title = element_text(size = rel(1.5), hjust = 0.5))+ scale_fill_trek("romulan")
+  })
+  session$onSessionEnded(stopApp)
+  }
+
+shinyApp(ui, server)
+```
+
+
+Graphs comparing Genus and Species
+```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  dashboardHeader(title = "Abundance"),
+  dashboardSidebar(),
+  dashboardBody(
+  selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
+  selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species"), selected = "n_genus"),
+  plotOutput("plot", width = "500px", height = "400px"))
+)
+
+server <- function(input, output, session) { 
+  output$plot <- renderPlot({
+  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text(hjust = 5)) + theme(plot.title = element_text(size = rel(1.5), hjust = 5))+ scale_fill_brewer(palette = "Set1")
+  })
+  session$onSessionEnded(stopApp)
+  }
+shinyApp(ui, server)
+```
