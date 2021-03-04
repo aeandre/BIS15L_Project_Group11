@@ -136,6 +136,7 @@ asd_microbiome
 ## #   b152 <dbl>, b156 <dbl>, b158 <dbl>, b164 <dbl>
 ```
 
+
 #### pivoting longer and taking out unclassified data
 
 ```r
@@ -163,7 +164,8 @@ asd_microbiome_longer
 ## # ... with 279,710 more rows
 ```
 
-#### wrangling the taxonomy column into genus, species, strain, and culture
+
+#### wrangling the taxonomy column into genus, species, strain, and culture + identifying unknown species
 
 ```r
 asd_microbiome_tidy <- asd_microbiome_longer %>% 
@@ -172,6 +174,7 @@ asd_microbiome_tidy <- asd_microbiome_longer %>%
   separate(species, into = c("species", "strain"), sep = " sp. ") %>%
   separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
   mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  mutate(species = ifelse(species == genus, NA, species)) %>% 
   select(- extra_genus, - trash)
 ```
 
@@ -214,18 +217,10 @@ asd_microbiome_tidy
 ```
 
 
-#### finding unknown species
-
-```r
-asd_microbiome_tidy2 <- asd_microbiome_tidy %>% 
-  mutate(species = ifelse(species == genus, NA, species))
-view(asd_microbiome_tidy2)
-```
-
 
 #### write
 
 ```r
-write.csv(asd_microbiome_tidy2, file = "tidiermicrobiome.csv", row.names = FALSE)
+write.csv(asd_microbiome_tidy, file = "tidiermicrobiome.csv", row.names = FALSE)
 ```
 
