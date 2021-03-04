@@ -18,6 +18,7 @@ microbiome_untidy <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Gr
 ```
 ```{r}
 microbiome_untidy <- janitor::clean_names(microbiome_untidy)
+microbiome_untidy
 ```
 
 ```{r}
@@ -25,7 +26,7 @@ microbiome_untidy_longer <- microbiome_untidy %>%
   pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
   filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
   separate(condition, into = c("condition", "patient_id"), sep = 1)
-view(microbiome_untidy_longer)
+microbiome_untidy_longer
 ```
 
 ```{r}
@@ -36,22 +37,49 @@ microbiome_untidy_wider
 
 ```{r}
 microbiome_difference <- microbiome_untidy_wider %>% 
-  mutate(difference = abs(a-b))
+  group_by(taxonomy) %>% 
+  summarise(avg_a = mean(a, na.rm = T), avg_b = mean(b, na.rm = T)) %>% 
+  mutate(difference = abs(avg_a-avg_b)) %>% 
+  arrange(desc(difference))
+microbiome_difference
 ```
 
 ```{r}
 microbiome_big_diff <- microbiome_difference %>% 
   filter(difference != "NA") %>% 
   arrange(desc(difference)) %>% 
-  top_n(100)
+  top_n(50)
 microbiome_big_diff
 ```
+#### Tidying the taxonomy column
+```{r}
+microbiome_big_diff_tidy <- microbiome_big_diff %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash) %>% 
+  mutate(species = ifelse(species == genus, NA, species))
+microbiome_big_diff_tidy
+```
+
+```{r}
+microbiome_big_diff_tidy %>% 
+  select(genus, difference) %>% 
+  group_by(genus) %>% 
+  summarise(avg_difference = mean(difference)) %>% 
+  ggplot(aes(x = reorder(genus, avg_difference), y = avg_difference))+
+  geom_col()+
+  coord_flip()
+```
+
 
 #### tidy taxonomy like I did for the main CSV
 ```{r}
 tidy_microbiome_big_diff <- microbiome_big_diff %>% 
   select(-difference) %>% 
-  pivot_longer(c("a", "b"), names_to = "condition", values_to = "abundance") %>% 
+  pivot_longer(c("avg_a", "avg_b"), names_to = "condition", values_to = "abundance") %>% 
   filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
   separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
   separate(genus, into = c("trash", "genus"), sep = "__") %>% 
@@ -62,6 +90,23 @@ tidy_microbiome_big_diff <- microbiome_big_diff %>%
   mutate(species = ifelse(species == genus, NA, species)) 
 tidy_microbiome_big_diff
 ```
+```{r}
+mycol <- c("deepskyblue4", "darkred")
+```
+
+
+```{r}
+tidy_microbiome_big_diff %>% 
+  select(genus, condition, abundance) %>% 
+  group_by(genus, condition) %>% 
+  summarise(avg_abundance = mean(abundance)) %>% 
+  ggplot(aes(x = reorder(genus, avg_abundance), y = avg_abundance, fill = condition))+
+  geom_col(position = "dodge")+
+  coord_flip()+
+  scale_fill_manual(values = mycol)
+  
+```
+
 
 ```{r}
 tidy_microbiome_big_diff %>% 
@@ -73,10 +118,10 @@ tidy_microbiome_big_diff %>%
   geom_tile(aes(fill = mean_abundance))+
   coord_flip()+
   theme_minimal()+
-  labs(title = "Relative Abundance of Biggest Difference Genera", x = "Condition", y = "Genera")+
-  scale_fill_gradient2(low = "cadetblue4", mid = "cadetblue2", high = "azure2", midpoint = 3000)
+  labs(title = "Relative Abundance of Highest Variation Genera", x = "Condition", y = "Genera")+
+  scale_fill_gradient2(low = "deepskyblue4", mid = "lightpink", high = "darkred", midpoint = 2000)
 ```
-
+darkslateblue, cadetblue2, azure4
 
 ```{r}
 microbiome <- readr::read_csv(here("tidy_data", "tidiermicrobiome.csv"))
@@ -93,36 +138,6 @@ microbiome %>%
   geom_tile(aes(fill = mean_abundance))
 ```
 
-```{r}
-my_col <- c("navy", "blue", "green", "yellow")
-```
 
 
-```{r}
-microbiome %>%
-  select(genus, abundance, condition) %>% 
-  group_by(genus, condition) %>%
-  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
-  arrange(desc(mean_abundance)) %>% 
-  filter(mean_abundance > 100) %>% 
-  ggplot(aes(x = genus, y = condition))+
-  geom_raster(aes(fill = mean_abundance))+
-  scale_fill_gradientn(colors = my_col)+
-  coord_flip()
-```
-
-Want to find the genera that have the biggest difference between a and b groups
-
-```{r}
-microbiome_wide <- microbiome %>% 
-  filter(species != "NA") %>% 
-  pivot_wider(names_from = "condition", values_from = "abundance", values_fn = length)
-microbiome_wide %>% 
-  filter(a == 2 | b ==2)
-```
-
-```{r}
-microbiome %>% 
-  filter(genus == "Prevotella", patient_id == 2)
-```
 
