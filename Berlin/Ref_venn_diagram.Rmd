@@ -1,0 +1,179 @@
+---
+title: "Venn Diagram Ref"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+---
+title: "Venn Diagram"
+author: "Allison Andre"
+date: "2/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+library(ggvenn)
+library(VennDiagram)
+``` 
+
+```{r}
+getwd()
+```
+
+
+## Load the Data
+```{r}
+ref_tidier_microbiome <- read_csv(here("Berlin/c_ref_tidiermicrobiome.csv"))
+```
+
+
+```{r}
+a_ref_asd_tidier_microbiome <- read_csv(here("Berlin/a_ref_asd_group.csv"))
+a_ref_asd_tidier_microbiome
+```
+
+```{r}
+a_ref_td_tidier <- read_csv(here("Berlin/a_ref_td_group.csv"))
+a_ref_td_tidier
+```
+
+## Prepare data for Venn diagram
+```{r}
+ref_td_venn <-
+  a_ref_td_tidier %>% 
+  rename(genus_td = "genus") %>% 
+  filter(abundance != 0) %>% 
+  select(genus_td, id)
+```
+
+```{r}
+ref_asd_venn <-
+  a_ref_asd_tidier_microbiome %>% 
+  rename(genus_asd = "genus") %>% 
+  filter(abundance != 0)
+```
+
+```{r}
+both_venn <- full_join(ref_td_venn, ref_asd_venn, by = "id")
+both_venn
+```
+
+```{r}
+both_venn$genus_td <- as.factor(both_venn$genus_td)
+both_venn$genus_asd <- as.factor(both_venn$genus_asd)
+```
+
+```{r}
+both_venn2 <- 
+  both_venn %>% 
+  filter(genus_td != "NA" | genus_asd != "NA")
+```
+
+
+## Build Venn Diagram
+
+```{r}
+ref_venn_data <- list(
+  "TD Genera" = both_venn2$genus_td,
+  "ASD Genera" = both_venn2$genus_asd
+)
+```
+
+
+
+```{r}
+ggvenn(ref_venn_data, fill_color = c("yellow", "turquoise1"))
+```
+
+## Try to build a COOLER venn diagram
+
+```{r}
+anyNA(ref_venn_data)
+```
+
+
+```{r}
+grid.newpage()
+draw.pairwise.venn(area1 = 1264,                      
+                   area2 = 1101,
+                   cross.area = 1068, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("TD Genera", "ASD Genera"))
+```
+
+
+## Bargraphs of number of genera unique to each group
+
+```{r}
+unique_names <- c("TD group", "ASD Group")
+unique_counts <- c(196, 33)
+unique_genera <- data_frame(unique_names, unique_counts)
+unique_genera
+```
+
+```{r}
+unique_genera %>% 
+  ggplot(aes(x = unique_names, y = unique_counts, fill = unique_names)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Genera Per Group",
+       x = NULL,
+       y = "Unique Genera") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
+
+#Making a csv file to reference for shinyapp
+```{r}
+write.csv(unique_genera, file = "unique_genera.csv", row.names = FALSE)
+```
+
+
+
+##Join genera data with demographics data
+```{r}
+both_venn$condition <- str_to_upper(both_venn$condition, locale = "en")
+```
+
+```{r}
+both_venn3 <-
+  both_venn %>% 
+  unite(sample_id, "condition", "patient_id", sep = "")
+```
+
+```{r}
+asd <- readr::read_csv("ASD_meta_abundance_2.csv")
+asd
+```
+```{r}
+asd2 <- 
+  asd %>% 
+  pivot_longer(-Taxonomy, 
+               names_to = "subject", 
+               values_to = "abundance") %>% 
+  filter(str_detect(Taxonomy, "Unclassified") == FALSE) %>% 
+  separate(Taxonomy, into = c("genus", "species"), sep = ";") %>% 
+  separate(genus, into = c("g", "genus"), sep = "__") %>% 
+  separate(species, into = c("s", "species"), sep = "__") %>% 
+  select( -g, -s, -species)
+asd2
+```
+
+```{r}
+```
