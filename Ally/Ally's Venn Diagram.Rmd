@@ -209,4 +209,33 @@ draw.pairwise.venn(area1 = 1335,
                    fill = c("yellow", "turquoise1"), 
                    category = c("Male Genera", "Female Genera"))
 ```
+## Venn Diagram by Age Group
+```{r}
+age_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
+  select(-c(sample_id, abundance, gender)) %>% 
+  mutate(age = case_when(age <= 7 ~ "younger",
+                         age > 7 ~ "older"))
+age_venn$genus <- as.factor(age_venn$genus)
+age_venn_y <-
+  age_venn %>% 
+  filter(age == "younger") %>% 
+  rename(genus_y = "genus")
+
+age_venn_o <-
+  age_venn %>% 
+  filter(age == "older") %>% 
+  rename(genus_o = "genus")
+```
+
+```{r}
+age_venn_data <- list(
+  "Younger Genera" = age_venn_y$genus_y,
+  "Older Genera" = age_venn_o$genus_o
+)
+```
+
+```{r}
+ggvenn(age_venn_data, fill_color = c("yellow", "turquoise1"))
+```
+
 
