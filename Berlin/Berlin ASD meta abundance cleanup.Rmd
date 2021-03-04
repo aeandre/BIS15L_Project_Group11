@@ -1,5 +1,6 @@
 ---
 title: "Project Try Berlin"
+author: "Berlin DeGroen"
 output: 
   html_document: 
     keep_md: yes
@@ -15,28 +16,32 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
+```{r}
+#install.packages("VennDiagram")
+#install.packages("ggvenn")
+```
+
+
 ```{r message=FALSE, warning=FALSE}
 library(tidyverse)
 library(janitor)
 library(here)
 library(naniar)
+library(ggvenn)
+library(VennDiagram)
+library(shiny)
+library(shinydashboard)
+library(trekcolors)
+library(ggplot2)
 ``` 
 
 ```{r}
 getwd()
-<<<<<<< Updated upstream
-=======
 ```
 
 
 ```{r}
 asd <- read_csv(here("Berlin/ASD meta abundance 2.csv"))
->>>>>>> Stashed changes
-```
-
-
-```{r}
-asd <- read_csv(here("Berlin/ASD meta abundance 2 copy.csv"))
 ```
 
 ```{r}
@@ -50,18 +55,41 @@ summary(asd)
 ```{r}
 names(asd)
 ```
-
+##Pivoting longer
 ```{r}
-<<<<<<< Updated upstream
 asd_longer <- asd %>% 
   pivot_longer(-Taxonomy, names_to = "Condition", values_to = "Abundance")
 asd_longer
 ```
+##Removing "Unclassified" from data
+```{r}
+asd_longer_no_unclassified <- asd_longer %>% 
+  filter(!str_detect(Taxonomy, "Unclassified"))
+asd_longer_no_unclassified
+```
 
-=======
-
+```{r}
+asd_separate <- asd_longer_no_unclassified %>%
+  separate(Taxonomy, into = c("Genus", "Species"), sep = ";") %>% 
+  separate(Species, into = c("Species", "Strain"), sep = " " )
+asd_separate
 ```
 
 
+```{r}
+asd_separate2 <- asd_separate %>% 
+  separate(Genus, into = c("remove", "Genus"), sep = "__") %>% 
+  separate(Species, into = c("remove_more", "Species"), sep = "__")
+asd_separate2
+```
 
->>>>>>> Stashed changes
+```{r}
+asd_hopefully_tidy <- asd_separate2 %>%
+  select(-remove, -remove_more)
+asd_hopefully_tidy
+```
+##Write.csv
+```{r}
+write.csv(asd_hopefully_tidy, file = "asd_hopefully_tidy.csv", row.names = FALSE)
+```
+
