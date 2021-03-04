@@ -1,0 +1,167 @@
+---
+title: "Ref Ally Tidy Data"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+``` 
+
+```{r}
+getwd()
+```
+
+
+## Load the Data
+```{r message=FALSE, warning=FALSE}
+asd <- readr::read_csv("ASD meta abundance 2.csv")
+asd
+```
+
+
+## Tidying the Data
+```{r}
+asd_tidy <- asd %>% 
+  pivot_longer(-Taxonomy, 
+               names_to = "subject", 
+               values_to = "abundance") %>% 
+  separate(subject, into = c("group", "number"), sep = 1)
+asd_tidy
+```
+
+
+## Remove unidentified bacteria
+```{r}
+asd_tidy2 <- asd_tidy %>% 
+  filter(str_detect(Taxonomy, "Unclassified") == FALSE)
+asd_tidy2
+```
+
+## Tidy up the Taxonomy column
+```{r}
+asd_tidy3 <- 
+  asd_tidy2 %>% 
+  separate(Taxonomy, into = c("genus", "species"), sep = ";")
+```
+
+## Tidy up the species and genus and number columns
+```{r}
+asd_tidy4 <-
+  asd_tidy3 %>% 
+  separate(genus, into = c("g", "genus"), sep = "__") %>% 
+  separate(species, into = c("s", "species"), sep = "__") %>% 
+  select( -g, -s) %>% 
+  rename(id = "number")
+asd_tidy4
+```
+
+
+## Make genus and species and id into factors
+```{r}
+asd_tidy4$genus <- as.factor(asd_tidy4$genus)
+asd_tidy4$species <- as.factor(asd_tidy4$species)
+asd_tidy4$id <- as.factor(asd_tidy4$id)
+```
+
+
+## Break it into an ASD and TD groups
+```{r}
+asd_group <-
+  asd_tidy4 %>% 
+  filter(group == "B")
+asd_group
+```
+
+```{r}
+td_group <-
+  asd_tidy4 %>% 
+  filter(group == "A")
+td_group
+```
+
+## Preliminary Analysis of TD and ASD groups
+```{r}
+td_diversity <- td_group %>% 
+  filter(abundance != 0) %>% 
+  summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
+td_diversity
+```
+
+```{r}
+asd_diversity <-
+asd_group %>% 
+  filter(abundance != 0) %>% 
+  summarize(n_genus = n_distinct(genus), n_species = n_distinct(species))
+asd_diversity
+```
+<<<<<<< HEAD
+Note: The TD Group has greater diversity than the ASD group. 
+
+## Plot the diversity of the ASD vs TD groups
+```{r}
+group <- c("td", "asd")
+microbiome_diversity <-
+  full_join(td_diversity, asd_diversity) %>% 
+  cbind(group) %>% 
+  select(group, n_genus, n_species)
+microbiome_diversity
+```
+
+Here is the genus diversity:
+```{r}
+microbiome_diversity %>% 
+  ggplot(aes(x = group, y = n_genus, fill = group)) +
+  geom_col() +
+  theme_linedraw() +
+  labs(title = "Number of Genera per Group",
+       x = "Group",
+       y = "Number of Genera") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) +
+  scale_fill_brewer(palette = "Set1")
+```
+
+Here is the species diversity:
+```{r}
+microbiome_diversity %>% 
+  ggplot(aes(x = group, y = n_species, fill = group)) +
+  geom_col() +
+  theme_linedraw() +
+  labs(title = "Number of Species per Group",
+       x = "Group",
+       y = "Number of Species") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) +
+  scale_fill_brewer(palette = "Set1")
+```
+
+```{r}
+write.csv(asd_tidy4, file = "a_ref_microbiome.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(asd_group, file = "a_ref_asd_group.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(td_group, file = "a_ref_td_group.csv", row.names = FALSE)
+```
+
+```{r}
+write.csv(microbiome_diversity, file = "a_ref_microbiome_diversity.csv", row.names = FALSE)
+```
+
