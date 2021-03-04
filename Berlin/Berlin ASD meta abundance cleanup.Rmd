@@ -23,10 +23,12 @@ library(naniar)
 ``` 
 
 ```{r}
-asd <- read_csv(here("ASD meta abundance 2.csv"))
+getwd()
 ```
+
+
 ```{r}
-asd
+asd <- read_csv(here("Berlin/ASD meta abundance 2 copy.csv"))
 ```
 
 ```{r}
@@ -41,4 +43,9 @@ summary(asd)
 names(asd)
 ```
 
-I have yet to really dive into this, but this data set seems to just have characters.
+```{r}
+asd_longer <- asd %>% 
+  pivot_longer(-Taxonomy, names_to = "Condition", values_to = "Abundance")
+asd_longer
+```
+
