@@ -1,6 +1,8 @@
 ---
 title: "Berlin ShinyApp Attempt"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -36,6 +38,7 @@ microbiome <- read_csv(here("Berlin/a_ref_microbiome.csv"))
 asd_group <- read_csv(here("Berlin/a_ref_asd_group.csv"))
 td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
 microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
+unique_genera <- read_csv(here("Berlin/unique_genera.csv"))
 ```
 Graphs Comparing TD and ASD Groups
 ```{r, eval=F, echo=T}
@@ -65,20 +68,20 @@ shinyApp(ui, server)
 ```
 
 
-Graphs comparing Genus and Species
+Graphs comparing Genus, Species, and Unique Counts
 ```{r, eval=F, echo=T}
 ui <- dashboardPage(
   dashboardHeader(title = "Abundance"),
   dashboardSidebar(),
   dashboardBody(
   selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
-  selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species"), selected = "n_genus"),
+  selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
   plotOutput("plot", width = "500px", height = "400px"))
 )
 
 server <- function(input, output, session) { 
   output$plot <- renderPlot({
-  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text(hjust = 5)) + theme(plot.title = element_text(size = rel(1.5), hjust = 5))+ scale_fill_brewer(palette = "Set1")
+  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
   })
   session$onSessionEnded(stopApp)
   }

@@ -1,0 +1,89 @@
+---
+title: "C_ref_Tidy_Attempt"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+title: "Tidy Attempt"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+getwd()
+```
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+```
+
+
+```{r}
+c_ref_asd_microbiome <- read_csv(here("Berlin/ASD meta abundance 2 copy.csv"))
+```
+
+```{r}
+c_ref_asd_microbiome <- janitor::clean_names(c_ref_asd_microbiome)
+```
+
+
+#### pivoting longer and taking out unclassified data
+```{r}
+c_ref_asd_microbiome_longer <- c_ref_asd_microbiome %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE)
+c_ref_asd_microbiome_longer
+```
+
+#### wrangling the taxonomy column into genus, species, strain
+```{r}
+c_ref_asd_microbiome_tidy <- c_ref_asd_microbiome_longer %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ")
+c_ref_asd_microbiome_tidy
+```
+
+
+#### getting rid of extra genus/g and making a culture column
+
+```{r}
+c_ref_asd_microbiome_tidy3 <- c_ref_asd_microbiome_tidy %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash)
+c_ref_asd_microbiome_tidy3
+```
+
+#### finding unknown species
+```{r}
+c_ref_asd_microbiome_tidy4 <- c_ref_asd_microbiome_tidy3 %>% 
+  mutate(species = ifelse(species == genus, NA, species))
+view(c_ref_asd_microbiome_tidy4)
+```
+
+```{r}
+c_ref_asd_microbiome_tidy4 %>% 
+  filter(species == "copri")
+```
+
+
+#### write
+```{r}
+write.csv(c_ref_asd_microbiome_tidy4, file = "c_ref_tidiermicrobiome.csv", row.names = FALSE)
+```
