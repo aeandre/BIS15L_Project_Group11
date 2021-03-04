@@ -120,17 +120,14 @@ unique_genera %>%
   theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
 ```
 
-##Join genera data with demographics data
+#Prep data for Venn Diagram by Gender
+##Capitalize A and B
 ```{r}
 both_venn$condition <- str_to_upper(both_venn$condition, locale = "en")
 ```
 
-```{r}
-both_venn3 <-
-  both_venn %>% 
-  unite(sample_id, "condition", "patient_id", sep = "")
-```
-
+## Wrangle the data so they have enough in common to join them together
+### Abundance Data
 ```{r}
 asd <- readr::read_csv("ASD_meta_abundance_2.csv")
 asd
@@ -145,11 +142,71 @@ asd2 <-
   separate(Taxonomy, into = c("genus", "species"), sep = ";") %>% 
   separate(genus, into = c("g", "genus"), sep = "__") %>% 
   separate(species, into = c("s", "species"), sep = "__") %>% 
-  select( -g, -s, -species)
+  select( -g, -s, -species) %>% 
+  rename(sample_id = "subject")
 asd2
 ```
 
+###Demographics data
 ```{r}
+demographics <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/untidy_data/demographics.csv")
+demographics
+```
 
+```{r}
+demographics2 <-
+  demographics %>% 
+  clean_names() %>% 
+  filter(metagenomic_sequencing == "Yes") %>% 
+  select(sample_id, gender, age)
+demographics2
+```
+
+##Join the two dataframes
+```{r}
+demo_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
+  select(-c(sample_id, abundance, age))
+demo_venn
+```
+
+##Divide the genera by gender
+```{r}
+demo_venn_f <- 
+  demo_venn %>% 
+  filter(gender == "Female") %>% 
+  rename(genus_f = "genus")
+demo_venn_f
+demo_venn_m <-
+  demo_venn %>% 
+  filter(gender == "Male") %>% 
+  rename(genus_m = "genus")
+demo_venn_m
+```
+
+```{r}
+demo_venn_f$genus_f <- as.factor(demo_venn_f$genus_f)
+demo_venn_m$genus_m <- as.factor(demo_venn_m$genus_m)
+```
+
+#Venn diagrams of overlap by gender
+##Not-to=Scale Venn Diagram
+```{r}
+demo_venn_data <- list(
+  "Male Genera" = demo_venn_m$genus_m,
+  "Female Genera" = demo_venn_f$genus_f
+)
+```
+
+```{r}
+ggvenn(demo_venn_data, fill_color = c("yellow", "turquoise1"))
+```
+## To-Scale Venn Diagram
+```{r}
+grid.newpage()
+draw.pairwise.venn(area1 = 1335,                      
+                   area2 = 1335,
+                   cross.area = 1335, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("Male Genera", "Female Genera"))
 ```
 
