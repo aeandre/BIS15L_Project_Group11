@@ -1,6 +1,8 @@
 ---
 title: "Tidy Attempt"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -40,46 +42,34 @@ asd_microbiome
 ```{r}
 asd_microbiome_longer <- asd_microbiome %>% 
   pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
-  filter(str_detect(taxonomy, "Unclassified") == FALSE)
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1)
 asd_microbiome_longer
 ```
 
-#### wrangling the taxonomy column into genus, species, strain
+#### wrangling the taxonomy column into genus, species, strain, and culture
 ```{r}
 asd_microbiome_tidy <- asd_microbiome_longer %>% 
-  separate(condition, into = c("condition", "patient_id"), sep = 1) %>% 
   separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
   separate(genus, into = c("trash", "genus"), sep = "__") %>% 
   separate(species, into = c("species", "strain"), sep = " sp. ") %>%
-  separate(species, into = c("extra_genus", "species"), sep = " ")
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash)
 asd_microbiome_tidy
 ```
 
 
-#### getting rid of extra genus/g and making a culture column
-
-```{r}
-asd_microbiome_tidy3 <- asd_microbiome_tidy %>% 
-  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
-  select(- extra_genus, - trash)
-asd_microbiome_tidy3
-```
-
 #### finding unknown species
 ```{r}
-asd_microbiome_tidy4 <- asd_microbiome_tidy3 %>% 
+asd_microbiome_tidy2 <- asd_microbiome_tidy %>% 
   mutate(species = ifelse(species == genus, NA, species))
-view(asd_microbiome_tidy4)
-```
-
-```{r}
-asd_microbiome_tidy4 %>% 
-  filter(species == "copri")
+view(asd_microbiome_tidy2)
 ```
 
 
 #### write
 ```{r}
-write.csv(asd_microbiome_tidy4, file = "tidiermicrobiome.csv", row.names = FALSE)
+write.csv(asd_microbiome_tidy2, file = "tidiermicrobiome.csv", row.names = FALSE)
 ```
 

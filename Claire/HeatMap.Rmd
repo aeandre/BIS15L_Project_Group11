@@ -12,7 +12,7 @@ library(tidyverse)
 library(janitor)
 library(here)
 ```
-
+I'm going to have to tidy the data differently in order to find the biggest variation in genera.
 ```{r}
 microbiome_untidy <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
 ```
@@ -21,6 +21,7 @@ microbiome_untidy <- janitor::clean_names(microbiome_untidy)
 microbiome_untidy
 ```
 
+Pivot longer and separate "condition" letter from "patient ID" to ultimately get an "a" and a "b" column.
 ```{r}
 microbiome_untidy_longer <- microbiome_untidy %>% 
   pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
@@ -29,12 +30,14 @@ microbiome_untidy_longer <- microbiome_untidy %>%
 microbiome_untidy_longer
 ```
 
+Get "a" and "b" columns with "abundance" observations
 ```{r}
 microbiome_untidy_wider <- microbiome_untidy_longer %>% 
   pivot_wider(names_from = "condition", values_from = "abundance")
 microbiome_untidy_wider
 ```
 
+Create a "difference" column for each "genera"
 ```{r}
 microbiome_difference <- microbiome_untidy_wider %>% 
   group_by(taxonomy) %>% 
@@ -44,6 +47,7 @@ microbiome_difference <- microbiome_untidy_wider %>%
 microbiome_difference
 ```
 
+Create a new dataframe, **microbiome_big_diff**, with the top 50 most variable genera for all heatmap analysis
 ```{r}
 microbiome_big_diff <- microbiome_difference %>% 
   filter(difference != "NA") %>% 
@@ -121,22 +125,12 @@ tidy_microbiome_big_diff %>%
   labs(title = "Relative Abundance of Highest Variation Genera", x = "Condition", y = "Genera")+
   scale_fill_gradient2(low = "deepskyblue4", mid = "lightpink", high = "darkred", midpoint = 2000)
 ```
-darkslateblue, cadetblue2, azure4
 
 ```{r}
 microbiome <- readr::read_csv(here("tidy_data", "tidiermicrobiome.csv"))
 ```
 
-```{r}
-microbiome %>%
-  select(genus, abundance, condition) %>% 
-  group_by(genus, condition) %>%
-  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
-  arrange(desc(mean_abundance)) %>% 
-  filter(mean_abundance > 100) %>% 
-  ggplot(aes(x = genus, y = condition))+
-  geom_tile(aes(fill = mean_abundance))
-```
+`
 
 
 
