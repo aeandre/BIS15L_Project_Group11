@@ -25,12 +25,12 @@ tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Gr
 tidier_microbiome
 ```
 ```{r}
-asd_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/groups_tidier/asd_group_tidier.csv")
+asd_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/asd_group_tidier.csv")
 asd_tidier
 ```
 
 ```{r}
-td_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/groups_tidier/td_group_tidier.csv")
+td_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/td_group_tidier.csv")
 td_tidier
 ```
 
@@ -82,7 +82,7 @@ venn_data <- list(
 ggvenn(venn_data, fill_color = c("yellow", "turquoise1"))
 ```
 
-## Try to build a COOLER venn diagram
+## Try to build a COOLER (aka to-scale) venn diagram
 
 ```{r}
 anyNA(venn_data)
