@@ -321,3 +321,9 @@ write.csv(asd_group, file = "a_ref_asd_group.csv", row.names = FALSE)
 ```r
 write.csv(td_group, file = "a_ref_td_group.csv", row.names = FALSE)
 ```
+
+
+```r
+write.csv(microbiome_diversity, file = "a_ref_microbiome_diversity.csv", row.names = FALSE)
+```
+
