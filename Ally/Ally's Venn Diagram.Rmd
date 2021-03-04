@@ -167,7 +167,14 @@ demographics2
 demo_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
   select(-c(sample_id, abundance, age))
 demo_venn
+
+demo_abundance <- full_join(asd2, demographics2, by = "sample_id")
 ```
+
+```{r}
+write.csv(demo_abundance, file = "demographics_and_abundance.csv", row.names = FALSE)
+```
+
 
 ##Divide the genera by gender
 ```{r}
