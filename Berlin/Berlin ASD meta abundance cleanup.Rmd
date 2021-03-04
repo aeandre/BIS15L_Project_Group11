@@ -24,6 +24,14 @@ library(naniar)
 
 ```{r}
 getwd()
+<<<<<<< Updated upstream
+=======
+```
+
+
+```{r}
+asd <- read_csv(here("Berlin/ASD meta abundance 2.csv"))
+>>>>>>> Stashed changes
 ```
 
 
@@ -44,8 +52,16 @@ names(asd)
 ```
 
 ```{r}
+<<<<<<< Updated upstream
 asd_longer <- asd %>% 
   pivot_longer(-Taxonomy, names_to = "Condition", values_to = "Abundance")
 asd_longer
 ```
 
+=======
+
+```
+
+
+
+>>>>>>> Stashed changes
