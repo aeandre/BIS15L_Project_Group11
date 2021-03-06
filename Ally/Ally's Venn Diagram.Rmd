@@ -2,7 +2,9 @@
 title: "Venn Diagram"
 author: "Allison Andre"
 date: "2/24/2021"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
