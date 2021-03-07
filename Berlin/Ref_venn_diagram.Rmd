@@ -35,17 +35,17 @@ getwd()
 
 ## Load the Data
 ```{r}
-ref_tidier_microbiome <- read_csv(here("Berlin/c_ref_tidiermicrobiome.csv"))
+ref_tidier_microbiome <- read_csv(here("Berlin/Copy_files_csv/c_ref_tidiermicrobiome.csv"))
 ```
 
 
 ```{r}
-a_ref_asd_tidier_microbiome <- read_csv(here("Berlin/a_ref_asd_group.csv"))
+a_ref_asd_tidier_microbiome <- read_csv(here("Berlin/Copy_files_csv/a_ref_asd_group copy.csv"))
 a_ref_asd_tidier_microbiome
 ```
 
 ```{r}
-a_ref_td_tidier <- read_csv(here("Berlin/a_ref_td_group.csv"))
+a_ref_td_tidier <- read_csv(here("Berlin/Copy_files_csv/a_ref_td_group copy.csv"))
 a_ref_td_tidier 
 ```
 
@@ -136,10 +136,9 @@ write.csv(unique_genera, file = "unique_genera.csv", row.names = FALSE)
 ```
 
 
-
 ##Join genera data with demographics data
 ```{r}
-both_venn$condition <- str_to_upper(both_venn$condition, locale = "en")
+both_venn$condition <- full_join(both_venn$condition)
 ```
 
 ```{r}
