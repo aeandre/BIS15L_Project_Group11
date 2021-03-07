@@ -23,7 +23,7 @@ library(VennDiagram)
 ## Load the Data
 
 ```r
-tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv")
+tidier_microbiome <- readr::read_csv("tidiermicrobiome.csv")
 ```
 
 ```
@@ -62,7 +62,7 @@ tidier_microbiome
 ```
 
 ```r
-asd_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/asd_group_tidier.csv")
+asd_tidier <- readr::read_csv("asd_group_tidier.csv")
 ```
 
 ```
@@ -102,7 +102,7 @@ asd_tidier
 
 
 ```r
-td_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/td_group_tidier.csv")
+td_tidier <- readr::read_csv("td_group_tidier.csv")
 ```
 
 ```
@@ -195,7 +195,7 @@ both_venn2 <-
 ```
 
 
-## Build Venn Diagram
+## Build Venn Diagram (NOTE to Berlin: The following are 3 ways of displaying the same information)
 
 
 ```r
@@ -348,12 +348,13 @@ asd2 <-
   separate(genus, into = c("g", "genus"), sep = "__") %>% 
   separate(species, into = c("s", "species"), sep = "__") %>% 
   select( -g, -s, -species) %>% 
-  rename(sample_id = "subject")
+  rename(sample_id = "subject") %>% 
+  filter(abundance !=0)
 asd2
 ```
 
 ```
-## # A tibble: 279,720 x 3
+## # A tibble: 95,208 x 3
 ##    genus            sample_id abundance
 ##    <chr>            <chr>         <dbl>
 ##  1 Faecalibacterium A3             4988
@@ -366,7 +367,7 @@ asd2
 ##  8 Faecalibacterium A53            6337
 ##  9 Faecalibacterium A54            5064
 ## 10 Faecalibacterium A59            6359
-## # … with 279,710 more rows
+## # … with 95,198 more rows
 ```
 
 ###Demographics data
@@ -448,7 +449,7 @@ demo_venn
 ```
 
 ```
-## # A tibble: 279,720 x 2
+## # A tibble: 95,208 x 2
 ##    genus            gender
 ##    <chr>            <chr> 
 ##  1 Faecalibacterium Female
@@ -461,7 +462,7 @@ demo_venn
 ##  8 Faecalibacterium Male  
 ##  9 Faecalibacterium Male  
 ## 10 Faecalibacterium Male  
-## # … with 279,710 more rows
+## # … with 95,198 more rows
 ```
 
 ```r
@@ -485,7 +486,7 @@ demo_venn_f
 ```
 
 ```
-## # A tibble: 18,648 x 2
+## # A tibble: 5,091 x 2
 ##    genus_f          gender
 ##    <chr>            <chr> 
 ##  1 Faecalibacterium Female
@@ -498,7 +499,7 @@ demo_venn_f
 ##  8 Hungatella       Female
 ##  9 Clostridium      Female
 ## 10 Clostridium      Female
-## # … with 18,638 more rows
+## # … with 5,081 more rows
 ```
 
 ```r
@@ -510,7 +511,7 @@ demo_venn_m
 ```
 
 ```
-## # A tibble: 261,072 x 2
+## # A tibble: 90,117 x 2
 ##    genus_m          gender
 ##    <chr>            <chr> 
 ##  1 Faecalibacterium Male  
@@ -523,7 +524,7 @@ demo_venn_m
 ##  8 Faecalibacterium Male  
 ##  9 Faecalibacterium Male  
 ## 10 Faecalibacterium Male  
-## # … with 261,062 more rows
+## # … with 90,107 more rows
 ```
 
 
@@ -552,9 +553,9 @@ ggvenn(demo_venn_data, fill_color = c("yellow", "turquoise1"))
 
 ```r
 grid.newpage()
-draw.pairwise.venn(area1 = 1335,                      
-                   area2 = 1335,
-                   cross.area = 1335, 
+draw.pairwise.venn(area1 = 652+643,                      
+                   area2 = 644,
+                   cross.area = 643, 
                    fill = c("yellow", "turquoise1"), 
                    category = c("Male Genera", "Female Genera"))
 ```
@@ -562,7 +563,7 @@ draw.pairwise.venn(area1 = 1335,
 ![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-27-1.png)<!-- -->
 
 ```
-## (polygon[GRID.polygon.117], polygon[GRID.polygon.118], text[GRID.text.119], text[GRID.text.120], text[GRID.text.121], text[GRID.text.122], text[GRID.text.123])
+## (polygon[GRID.polygon.117], polygon[GRID.polygon.118], polygon[GRID.polygon.119], polygon[GRID.polygon.120], text[GRID.text.121], text[GRID.text.122], lines[GRID.lines.123], text[GRID.text.124], text[GRID.text.125], text[GRID.text.126])
 ```
 ## Venn Diagram by Age Group
 
@@ -598,4 +599,200 @@ ggvenn(age_venn_data, fill_color = c("yellow", "turquoise1"))
 
 ![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
+## Make COOLER Venn Diagram 
+
+```r
+grid.newpage()
+draw.pairwise.venn(area1 = 359+926,                      
+                   area2 = 926+11,
+                   cross.area = 926, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("Younger Genera", "Older Genera"))
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+
+```
+## (polygon[GRID.polygon.151], polygon[GRID.polygon.152], polygon[GRID.polygon.153], polygon[GRID.polygon.154], text[GRID.text.155], text[GRID.text.156], lines[GRID.lines.157], text[GRID.text.158], text[GRID.text.159], text[GRID.text.160])
+```
+
+
+#Venn Diagram of Species (NOTE to Berlin: The following are 3 ways of displaying the same information)
+## Prep the data
+
+```r
+asd_microbiome <- read_csv("ASD_meta_abundance_2.csv")
+```
+
+```
+## 
+## ── Column specification ────────────────────────────────────────────────────────
+## cols(
+##   .default = col_double(),
+##   Taxonomy = col_character()
+## )
+## ℹ Use `spec()` for the full column specifications.
+```
+
+
+```r
+asd_microbiome <- janitor::clean_names(asd_microbiome)
+```
+
+
+
+```r
+names(asd_microbiome)
+```
+
+```
+##  [1] "taxonomy" "a3"       "a5"       "a6"       "a9"       "a31"     
+##  [7] "a51"      "a52"      "a53"      "a54"      "a59"      "a67"     
+## [13] "a68"      "a69"      "a71"      "a73"      "a76"      "a78"     
+## [19] "a87"      "a89"      "a93"      "a101"     "a109"     "a113"    
+## [25] "a114"     "a115"     "a142"     "a144"     "a149"     "a164"    
+## [31] "a165"     "b1"       "b2"       "b3"       "b5"       "b6"      
+## [37] "b7"       "b8"       "b13"      "b14"      "b28"      "b29"     
+## [43] "b36"      "b37"      "b94"      "b99"      "b103"     "b106"    
+## [49] "b111"     "b114"     "b115"     "b120"     "b127"     "b132"    
+## [55] "b141"     "b142"     "b143"     "b152"     "b156"     "b158"    
+## [61] "b164"
+```
+
+
+```r
+asd_microbiome
+```
+
+```
+## # A tibble: 5,619 x 61
+##    taxonomy       a3    a5    a6    a9   a31   a51   a52   a53   a54   a59   a67
+##    <chr>       <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+##  1 g__Faecali…  4988  5060  2905  5745  4822  3889  4646  6337  5064  6359  3194
+##  2 g__Hungate…  5803  5612  4109  1432  2652  4175  3891   894  4903  2970  4029
+##  3 g__Clostri…  3793  2795  1355  5558  5383  3505  5541  4429  4121  3258  1901
+##  4 g__Butyric…    64  1385   725  1553    40    53    33   175    58  1636  1170
+##  5 g__Alistip…    15    20   723   620  3261    43    83    37    43  1114  2531
+##  6 g__Unclass…   100    29    11  1320    51    45    52    64    60   896    26
+##  7 g__Clostri…  2119  1230  1322  2675  1470  2262  2984  2004  1904  1227   821
+##  8 g__Unclass…    12    24     1    44    26     9    25    19    17    17    15
+##  9 g__Lachnoc…   453   691  2278   107   342  1304  1400  1207  2034  2051    20
+## 10 g__Butyric…  1266  1682    43  1726  1804  1441  2691  1886   919  2215  1063
+## # … with 5,609 more rows, and 49 more variables: a68 <dbl>, a69 <dbl>,
+## #   a71 <dbl>, a73 <dbl>, a76 <dbl>, a78 <dbl>, a87 <dbl>, a89 <dbl>,
+## #   a93 <dbl>, a101 <dbl>, a109 <dbl>, a113 <dbl>, a114 <dbl>, a115 <dbl>,
+## #   a142 <dbl>, a144 <dbl>, a149 <dbl>, a164 <dbl>, a165 <dbl>, b1 <dbl>,
+## #   b2 <dbl>, b3 <dbl>, b5 <dbl>, b6 <dbl>, b7 <dbl>, b8 <dbl>, b13 <dbl>,
+## #   b14 <dbl>, b28 <dbl>, b29 <dbl>, b36 <dbl>, b37 <dbl>, b94 <dbl>,
+## #   b99 <dbl>, b103 <dbl>, b106 <dbl>, b111 <dbl>, b114 <dbl>, b115 <dbl>,
+## #   b120 <dbl>, b127 <dbl>, b132 <dbl>, b141 <dbl>, b142 <dbl>, b143 <dbl>,
+## #   b152 <dbl>, b156 <dbl>, b158 <dbl>, b164 <dbl>
+```
+
+
+#### pivoting longer and taking out unclassified data
+
+```r
+asd_microbiome_longer <- asd_microbiome %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1)
+asd_microbiome_longer
+```
+
+```
+## # A tibble: 279,720 x 4
+##    taxonomy                                       condition patient_id abundance
+##    <chr>                                          <chr>     <chr>          <dbl>
+##  1 g__Faecalibacterium;s__Faecalibacterium praus… a         3               4988
+##  2 g__Faecalibacterium;s__Faecalibacterium praus… a         5               5060
+##  3 g__Faecalibacterium;s__Faecalibacterium praus… a         6               2905
+##  4 g__Faecalibacterium;s__Faecalibacterium praus… a         9               5745
+##  5 g__Faecalibacterium;s__Faecalibacterium praus… a         31              4822
+##  6 g__Faecalibacterium;s__Faecalibacterium praus… a         51              3889
+##  7 g__Faecalibacterium;s__Faecalibacterium praus… a         52              4646
+##  8 g__Faecalibacterium;s__Faecalibacterium praus… a         53              6337
+##  9 g__Faecalibacterium;s__Faecalibacterium praus… a         54              5064
+## 10 g__Faecalibacterium;s__Faecalibacterium praus… a         59              6359
+## # … with 279,710 more rows
+```
+
+
+
+```r
+asd_B2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "b") %>% 
+  rename(tax_asd = "taxonomy") %>% 
+  filter(abundance != 0)
+td_A2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "a") %>% 
+  rename(tax_td = "taxonomy") %>%
+  filter(abundance != 0)
+```
+
+## Make Venn Diagram
+
+```r
+species_venn_data2 <- list(
+  "TD Species" = td_A2$tax_td,
+  "ASD Species" = asd_B2$tax_asd
+)
+```
+
+
+```r
+ggvenn(species_venn_data2, fill_color = c("yellow", "turquoise1"))
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+## Make COOLER Venn Diagram
+
+```r
+grid.newpage()
+draw.pairwise.venn(area1 = (766+3591),                      
+                   area2 = (172 + 3591),
+                   cross.area = 3591, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("TD Species", "ASD Species"))
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+
+```
+## (polygon[GRID.polygon.185], polygon[GRID.polygon.186], polygon[GRID.polygon.187], polygon[GRID.polygon.188], text[GRID.text.189], text[GRID.text.190], lines[GRID.lines.191], text[GRID.text.192], text[GRID.text.193], text[GRID.text.194])
+```
+
+
+```r
+unique_names2 <- c("TD group", "ASD Group")
+unique_counts2 <- c(766, 172)
+unique_species <- data_frame(unique_names2, unique_counts2)
+unique_species
+```
+
+```
+## # A tibble: 2 x 2
+##   unique_names2 unique_counts2
+##   <chr>                  <dbl>
+## 1 TD group                 766
+## 2 ASD Group                172
+```
+
+
+
+```r
+unique_species %>% 
+  ggplot(aes(x = unique_names2, y = unique_counts2, fill = unique_names2)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Species Per Group",
+       x = NULL,
+       y = "Unique Species") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
 

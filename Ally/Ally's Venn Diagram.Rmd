@@ -23,16 +23,16 @@ library(VennDiagram)
 
 ## Load the Data
 ```{r}
-tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv")
+tidier_microbiome <- readr::read_csv("tidiermicrobiome.csv")
 tidier_microbiome
 ```
 ```{r}
-asd_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/asd_group_tidier.csv")
+asd_tidier <- readr::read_csv("asd_group_tidier.csv")
 asd_tidier
 ```
 
 ```{r}
-td_tidier <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/td_group_tidier.csv")
+td_tidier <- readr::read_csv("td_group_tidier.csv")
 td_tidier
 ```
 
@@ -69,7 +69,7 @@ both_venn2 <-
 ```
 
 
-## Build Venn Diagram
+## Build Venn Diagram (NOTE to Berlin: The following are 3 ways of displaying the same information)
 
 ```{r}
 venn_data <- list(
@@ -145,7 +145,8 @@ asd2 <-
   separate(genus, into = c("g", "genus"), sep = "__") %>% 
   separate(species, into = c("s", "species"), sep = "__") %>% 
   select( -g, -s, -species) %>% 
-  rename(sample_id = "subject")
+  rename(sample_id = "subject") %>% 
+  filter(abundance !=0)
 asd2
 ```
 
@@ -212,9 +213,9 @@ ggvenn(demo_venn_data, fill_color = c("yellow", "turquoise1"))
 ## To-Scale Venn Diagram
 ```{r}
 grid.newpage()
-draw.pairwise.venn(area1 = 1335,                      
-                   area2 = 1335,
-                   cross.area = 1335, 
+draw.pairwise.venn(area1 = 652+643,                      
+                   area2 = 644,
+                   cross.area = 643, 
                    fill = c("yellow", "turquoise1"), 
                    category = c("Male Genera", "Female Genera"))
 ```
@@ -247,4 +248,98 @@ age_venn_data <- list(
 ggvenn(age_venn_data, fill_color = c("yellow", "turquoise1"))
 ```
 
+## Make COOLER Venn Diagram 
+```{r}
+grid.newpage()
+draw.pairwise.venn(area1 = 359+926,                      
+                   area2 = 926+11,
+                   cross.area = 926, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("Younger Genera", "Older Genera"))
+```
+
+
+#Venn Diagram of Species (NOTE to Berlin: The following are 3 ways of displaying the same information)
+## Prep the data
+```{r}
+asd_microbiome <- read_csv("ASD_meta_abundance_2.csv")
+```
+
+```{r}
+asd_microbiome <- janitor::clean_names(asd_microbiome)
+```
+
+
+```{r}
+names(asd_microbiome)
+```
+
+```{r}
+asd_microbiome
+```
+
+
+#### pivoting longer and taking out unclassified data
+```{r}
+asd_microbiome_longer <- asd_microbiome %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1)
+asd_microbiome_longer
+```
+
+
+```{r}
+asd_B2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "b") %>% 
+  rename(tax_asd = "taxonomy") %>% 
+  filter(abundance != 0)
+td_A2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "a") %>% 
+  rename(tax_td = "taxonomy") %>%
+  filter(abundance != 0)
+```
+
+## Make Venn Diagram
+```{r}
+species_venn_data2 <- list(
+  "TD Species" = td_A2$tax_td,
+  "ASD Species" = asd_B2$tax_asd
+)
+```
+
+```{r}
+ggvenn(species_venn_data2, fill_color = c("yellow", "turquoise1"))
+```
+## Make COOLER Venn Diagram
+```{r}
+grid.newpage()
+draw.pairwise.venn(area1 = (766+3591),                      
+                   area2 = (172 + 3591),
+                   cross.area = 3591, 
+                   fill = c("yellow", "turquoise1"), 
+                   category = c("TD Species", "ASD Species"))
+```
+
+```{r}
+unique_names2 <- c("TD group", "ASD Group")
+unique_counts2 <- c(766, 172)
+unique_species <- data_frame(unique_names2, unique_counts2)
+unique_species
+```
+
+
+```{r}
+unique_species %>% 
+  ggplot(aes(x = unique_names2, y = unique_counts2, fill = unique_names2)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Species Per Group",
+       x = NULL,
+       y = "Unique Species") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
 
