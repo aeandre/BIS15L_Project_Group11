@@ -40,7 +40,7 @@ td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
 microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
 unique_genera <- read_csv(here("Berlin/unique_genera.csv"))
 ```
-Graphs Comparing TD and ASD Groups
+Graphs Comparing TD and ASD Groups (Unfinished)
 ```{r, eval=F, echo=T}
 ui <- fluidPage(    
   
@@ -66,7 +66,41 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
+Venn Diagram Attempt
+```{r, eval=F, echo=T}
+shinyServer(function(input, output) {
+  
+  output$vennDiagram <- renderPlot({
+    
+    # Only plot the Venn diagram if the input values are legit (the input values
+    # are all available and the intersection area isn't greater than either individual set). 
+    if(as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$adobe)) &&
+       as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$google))){
 
+      draw.pairwise.venn(area1 = as.numeric(input$google),
+                         area2 = as.numeric(input$adobe),
+                         cross.area = as.numeric(input$adobeGoogle),
+                         category = c("Google Analytics","Adobe Analytics"),
+                         fill = c("#F29B05","#A1D490"),
+                         ext.text = TRUE,
+                         ext.percent = c(0.1,0.1,0.1),
+                         ext.length = 0.6,
+                         label.col = rep("gray10",3),
+                         lwd = 0,
+                         cex = 2,
+                         fontface = rep("bold",3),
+                         fontfamily = rep("sans",3), 
+                         cat.cex = 1.5,
+                         cat.fontface = rep("plain",2),
+                         cat.fontfamily = rep("sans",2),
+                         cat.pos = c(0, 0),
+                         print.mode = c("percent","raw")
+                         )
+    }
+  })
+})
+
+```
 
 Graphs comparing Genus, Species, and Unique Counts
 ```{r, eval=F, echo=T}
