@@ -12,7 +12,9 @@ library(tidyverse)
 library(janitor)
 library(here)
 ```
-#### I'm going to have to tidy the data differently in order to find the biggest variation in genera.
+
+# ASD/TD Condition Heatmap
+## Loading the Data
 ```{r}
 microbiome_untidy <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
 ```
@@ -21,44 +23,13 @@ microbiome_untidy <- janitor::clean_names(microbiome_untidy)
 microbiome_untidy
 ```
 
-#### Pivot longer and separate "condition" letter from "patient ID" to ultimately get an "a" and a "b" column.
+## Finding the highest variation genera
+#### Pivot longer and separate "condition" letter from "patient ID" to ultimately get an "a" and a "b" column.Tidying taxonomy column
 ```{r}
-microbiome_untidy_longer <- microbiome_untidy %>% 
+microbiome_longer <- microbiome_untidy %>% 
   pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
   filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
-  separate(condition, into = c("condition", "patient_id"), sep = 1)
-microbiome_untidy_longer
-```
-
-#### Get "a" and "b" columns with "abundance" observations
-```{r}
-microbiome_untidy_wider <- microbiome_untidy_longer %>% 
-  pivot_wider(names_from = "condition", values_from = "abundance")
-microbiome_untidy_wider
-```
-
-#### Create a "difference" column for each "genera"
-```{r}
-microbiome_difference <- microbiome_untidy_wider %>% 
-  group_by(taxonomy) %>% 
-  summarise(avg_a = mean(a, na.rm = T), avg_b = mean(b, na.rm = T)) %>% 
-  mutate(difference = abs(avg_a-avg_b)) %>% 
-  arrange(desc(difference))
-microbiome_difference
-```
-
-#### Create a new dataframe, **microbiome_big_diff**, with the top 50 most variable genera for all heatmap analysis
-```{r}
-microbiome_big_diff <- microbiome_difference %>% 
-  filter(difference != "NA") %>% 
-  arrange(desc(difference)) %>% 
-  top_n(50)
-microbiome_big_diff
-```
-#### Tidying the taxonomy column (using the steps from "Claire Tidy Attempt")
-need to rename the columns to just a and b
-```{r}
-microbiome_big_diff_tidy <- microbiome_big_diff %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>%
   separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
   separate(genus, into = c("trash", "genus"), sep = "__") %>% 
   separate(species, into = c("species", "strain"), sep = " sp. ") %>%
@@ -66,72 +37,175 @@ microbiome_big_diff_tidy <- microbiome_big_diff %>%
   mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
   select(- extra_genus, - trash) %>% 
   mutate(species = ifelse(species == genus, NA, species))
-microbiome_big_diff_tidy
+microbiome_longer
 ```
+
+```{r}
+microbiome_avg_long <- microbiome_longer %>% 
+  group_by(genus, condition) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  select(genus, condition, avg_abundance)
+microbiome_avg_long
+```
+
+
+#### Get "a" and "b" columns with "abundance" observations
+```{r}
+microbiome_wider <- microbiome_avg_long %>% 
+  pivot_wider(names_from = "condition", values_from = "avg_abundance")
+microbiome_wider
+```
+
+#### Create average value for each "genus" in each "condition", mutate a "difference" column for each "genera"
+```{r}
+microbiome_difference <- microbiome_wider %>% 
+  group_by(genus) %>% 
+  summarise(A = mean(a, na.rm = T), B = mean(b, na.rm = T)) %>% 
+  mutate(difference = abs(A-B)) %>% 
+  arrange(desc(difference))
+microbiome_difference
+```
+
+#### Create a new dataframe, **microbiome_big_diff**, with the top most variable genera for all heatmap analysis
+```{r}
+microbiome_big_diff <- microbiome_difference %>%
+  top_n(20)
+microbiome_big_diff
+```
+## Making the heatmap + extra graphs
 #### Graphing the differences between "a" and "b" for each of the high variation genera
 ```{r}
-microbiome_big_diff_tidy %>% 
+microbiome_big_diff %>% 
   select(genus, difference) %>% 
   group_by(genus) %>% 
   summarise(avg_difference = mean(difference)) %>% 
   ggplot(aes(x = reorder(genus, avg_difference), y = avg_difference))+
-  geom_col()+
-  coord_flip()
+  geom_col(fill = "lightpink3")+
+  coord_flip()+
+  theme_minimal()+
+  labs(title = "Difference Between Conditions in Highest Variable Genera", y = "Average Difference in Abundance", x = "Genus")
 ```
 
 
 #### Making a new dataframe of the top 50 high variation genera
 Getting rid of the difference column and making a "condition" column again + tidy taxonomy like I did for the main CSV
 ```{r}
-tidy_microbiome_big_diff <- microbiome_big_diff %>% 
+microbiome_big_diff_long <- microbiome_big_diff %>% 
   select(-difference) %>% 
-  pivot_longer(c("avg_a", "avg_b"), names_to = "condition", values_to = "abundance") %>% 
-  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
-  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
-  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
-  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
-  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
-  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
-  select(- extra_genus, - trash) %>% 
-  mutate(species = ifelse(species == genus, NA, species)) 
-tidy_microbiome_big_diff
+  pivot_longer(c("A", "B"), names_to = "condition", values_to = "avg_abundance")
+microbiome_big_diff_long
 ```
 
 
-#### Heatmap of difference between "a" and "b" for each high variation genera
+#### Graphing the abundances of the high variation genera
 ```{r}
 mycol <- c("deepskyblue4", "darkred")
+mycoln <- c("darkred", "lightpink", "deepskyblue4")
 ```
 
 
 ```{r}
-tidy_microbiome_big_diff %>% 
-  select(genus, condition, abundance) %>% 
-  group_by(genus, condition) %>% 
-  summarise(avg_abundance = mean(abundance)) %>% 
+microbiome_big_diff_long %>% 
   ggplot(aes(x = reorder(genus, avg_abundance), y = avg_abundance, fill = condition))+
   geom_col(position = "dodge")+
   coord_flip()+
-  scale_fill_manual(values = mycol)
+  scale_fill_manual(values = mycol)+
+  labs(title = "Abundance of Highest Variable Genera by Condition", y = "Average Abundance", x = "Genus", fill = "Condition")
   
 ```
 
-
+#### Heatmap of difference between "a" and "b" for each high variation genera
 ```{r}
-tidy_microbiome_big_diff %>% 
-  select(genus, abundance, condition) %>% 
-  group_by(genus, condition) %>%
-  summarise(mean_abundance = mean(abundance, na.rm = T)) %>% 
-  arrange(desc(mean_abundance)) %>% 
-  ggplot(aes(x = reorder(genus, mean_abundance) , y = condition))+
-  geom_tile(aes(fill = mean_abundance))+
+microbiome_big_diff_long %>% 
+  ggplot(aes(x = reorder(genus, avg_abundance) , y = condition))+
+  geom_tile(aes(fill = avg_abundance, ))+
   coord_flip()+
   theme_minimal()+
-  labs(title = "Relative Abundance of Highest Variation Genera", x = "Condition", y = "Genera")+
-  scale_fill_gradient2(low = "deepskyblue4", mid = "lightpink", high = "darkred", midpoint = 2000)
+  labs(title = "Abundance of Highest Variation Genera", x = "Genus", y = "Condition", fill = "Average Abundance")+
+  scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
-`
+## Most Abundant Genera
+#### Heatmap of the 20 most abundant genera
+```{r}
+microbiome_avg_long %>%
+  filter(avg_abundance > 114 | genus == "Odoribacter" | genus == "Parasutterella") %>% 
+  ggplot(aes(x = reorder(genus, avg_abundance) , y = condition))+
+  geom_tile(aes(fill = avg_abundance))+
+  coord_flip()+
+  theme_minimal()+
+  labs(title = "Most Abundant Genera", y = "Condition", x = "Genus", fill = "Average Abundance")+
+  scale_fill_gradientn(colours = mycoln, trans = "log")
+```
+```{r}
+microbiome_avg_long %>% 
+  filter(avg_abundance > 114 | genus == "Odoribacter" | genus == "Parasutterella") %>%  
+  ggplot(aes(x = reorder(genus, avg_abundance), y = avg_abundance, fill = condition))+
+  geom_col(position = "dodge")+
+  coord_flip()+
+  scale_fill_manual(values = mycol)+
+  labs(title = "Most Abundant Genera by Condition", y = "Average Abundance", x = "Genus", fill = "Condition")
+```
 
 
+# Age Heatmap
+## Loading Data
+```{r}
+demographics <- readr::read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/tidy_data/demographics_and_abundance.csv")
+```
+
+```{r}
+names(demographics)
+```
+#### Separate condition and ID number
+```{r}
+demographics_untidy <- demographics %>%
+  separate(sample_id, into = c("condition", "patient_id"), sep = 1)
+demographics_untidy
+```
+
+#### Finding abundance by age for group A
+```{r}
+big_demographics_A <- demographics_untidy %>%
+  filter(condition == "A") %>% 
+  group_by(genus, age) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(avg_abundance))
+big_demographics_A
+```
+
+#### Making the heatmap with the 20 top genera
+```{r}
+big_demographics_A %>%
+  filter(genus == "Hungatella" | genus == "Faecalibacterium" | genus == "Phascolarctobacterium" | genus == "Flavonifractor" | genus == "Butyricicoccus" | genus == "Subdoligranulum" | genus == "Bilophila" | genus == "Butyricimonas" | genus == "Holdemanella" | genus == "Oscillibacter" | genus == "Fusicatenibacter" | genus == "Intestinimonas" | genus == "Ruthenibacterium" | genus == "Paraprevotella" | genus == "Escherichia" | genus == "Roseburia"| genus == "Eisenbergiella"| genus == "Alistipes"| genus == "Eubacterium"| genus == "Odoribacter") %>%
+  ggplot(aes(x = reorder(genus, avg_abundance) , y = factor(age)))+
+  geom_tile(aes(fill = avg_abundance))+
+  coord_flip()+
+  theme_minimal()+
+  labs(title = "Most Abundant Genera in A Group", y = "Age", x = "Genus", fill = "Average Abundance")+
+  scale_fill_gradientn(colours = mycoln, trans = "log")
+```
+
+#### Finding abundance by age for group B
+```{r}
+big_demographics_B <- demographics_untidy %>%
+  filter(condition == "B") %>% 
+  group_by(genus, age) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(avg_abundance))
+big_demographics_B
+```
+
+#### Making the heatmap with top 20 abundant genera
+
+```{r}
+big_demographics_B %>%
+  filter(genus == "Hungatella" | genus == "Faecalibacterium" | genus == "Phascolarctobacterium" | genus == "Flavonifractor" | genus == "Butyricicoccus" | genus == "Subdoligranulum" | genus == "Bilophila" | genus == "Butyricimonas" | genus == "Holdemanella" | genus == "Oscillibacter" | genus == "Fusicatenibacter" | genus == "Intestinimonas" | genus == "Ruthenibacterium" | genus == "Lachnoclostridium" | genus == "Escherichia" | genus == "Roseburia"| genus == "Eisenbergiella"| genus == "Alistipes"| genus == "Eubacterium"| genus == "Odoribacter") %>%
+  ggplot(aes(x = reorder(genus, avg_abundance) , y = factor(age)))+
+  geom_tile(aes(fill = avg_abundance))+
+  coord_flip()+
+  theme_minimal()+
+  labs(title = "Most Abundant Genera in B Group", y = "Age", x = "Genera", fill = "Average Abundance")+
+  scale_fill_gradientn(colours = mycoln, trans = "log")
+```
 
 
