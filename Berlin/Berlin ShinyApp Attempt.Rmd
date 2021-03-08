@@ -40,14 +40,16 @@ unique_genera <- read_csv(here("Berlin/Copy_others/Ally/unique_genera.csv"))
 demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
 #both_venn <- read_csv(here("Berlin/Copy_others/Ally/both_venn copy.csv"))
 #venn_data <- read_csv(here("Berlin/Copy_others/Ally/venn_data copy.csv"))
+microbiome_big_diff <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff copy.csv"))
+microbiome_big_diff_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff_long copy.csv"))
+microbiome_big_diff <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff copy.csv"))
+microbiome_avg_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_avg_long copy.csv"))
+big_demographics_A <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_A copy.csv"))
+big_demographics_B <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_B copy.csv"))
 ```
+Heat maps
+```{r, eval=F, echo=T}
 
-```{r}
-ui <- fluidPage()
-
-server <- function(input, output) {}
-
-shinyApp(ui, server)
 ```
 
 Venn Diagram Attempt from another source
