@@ -37,35 +37,20 @@ td_group <- read_csv(here("Berlin/Copy_others/Ally/td_group copy.csv"))
 asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
 td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
 unique_genera <- read_csv(here("Berlin/Copy_others/Ally/unique_genera.csv"))
-demographics <- read_csv(here("Berlin/Copy_others/Ally/demographics_tidy copy.csv"))
+demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
+#both_venn <- read_csv(here("Berlin/Copy_others/Ally/both_venn copy.csv"))
+#venn_data <- read_csv(here("Berlin/Copy_others/Ally/venn_data copy.csv"))
 ```
-Graphs Comparing TD and ASD Groups (Unfinished)
-```{r, eval=F, echo=T}
-ui <- fluidPage(    
-  
-  titlePanel("TD and ASD Species/Genus Abundance"), 
-  sidebarLayout(      
-  sidebarPanel(
-  selectInput("genus", "species", " Select Group of Interest:", choices=unique(microbiome_diversity$group)),
-      hr(),
-      helpText("Reference: Zhou Dan et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329")
-    ),
-    mainPanel(
-      plotOutput("Plot")  
-    )
-    )
-    )
-server <- function(input, output, session) {
-  session$onSessionEnded(stopApp)
-  output$Plot <- renderPlot({
-  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + theme(plot.title = element_text(size = rel(1.5), hjust = 0.5))+ scale_fill_trek("romulan")
-  })
-  session$onSessionEnded(stopApp)
-  }
+
+```{r}
+ui <- fluidPage()
+
+server <- function(input, output) {}
 
 shinyApp(ui, server)
 ```
 
+Venn Diagram Attempt from another source
 ```{r, eval=F, echo=T}
 ui <- fluidPage(
   titlePanel("Venn Diagram"),
@@ -76,7 +61,7 @@ ui <- fluidPage(
       checkboxGroupInput(
         "SELECTION",
         label = "Select your subsets",
-        choices = list("Web of Science" = "WoS",
+        choices = list("TD.Genera" = "TD.Genera",
                        "Scopus" = "Scopus",
                        "Dimensions" = "Dimensions",
                        "LENS" = "LENS"),
@@ -110,19 +95,19 @@ shinyApp(ui = ui, server = server)
 ```
 
 
-Venn Diagram Attempt (server.R)
+Venn Diagram Attempt (server.R) (Doesn't work for some reason?)
 ```{r, eval=F, echo=T}
 shinyServer(function(input, output) {
   
   output$vennDiagram <- renderPlot({
 
-    if(as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$adobe)) &&
-       as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$google))){
+    if(as.numeric(req(input$venn_diagram)) <= as.numeric(req(input$TD.Genera)) &&
+       as.numeric(req(input$venn_diagram)) <= as.numeric(req(input$ASD.Genera))){
 
-      draw.pairwise.venn(area1 = as.numeric(input$google),
-                         area2 = as.numeric(input$adobe),
-                         cross.area = as.numeric(input$adobeGoogle),
-                         category = c("Google Analytics","Adobe Analytics"),
+      draw.pairwise.venn(area1 = as.numeric(input$TD.Genera),
+                         area2 = as.numeric(input$ASD.Genera),
+                         cross.area = as.numeric(input$venn_diagram), #Fairly sure wrong
+                         category = c("TD.Genera","ASD.Genera"),
                          fill = c("#F29B05","#A1D490"),
                          ext.text = TRUE,
                          ext.percent = c(0.1,0.1,0.1),
@@ -142,6 +127,7 @@ shinyServer(function(input, output) {
   })
 })
 
+shinyApp(ui, server)
 ```
 
 Venn Diagram Attempt (ui.R)
@@ -153,9 +139,9 @@ shinyUI(fluidPage(
   titlePanel(h3("Venn Diagram")),
 
   fluidRow(
-    column(4,numericInput("TD Genera", label = "Total Google Analytics Users", value = NULL)),
-    column(4,numericInput("adobe", label = "Total Adobe Analytics Users", value = NULL)),
-    column(4,numericInput("adobeGoogle", label = "Google Analytics AND Adobe Analytics", value = NULL))
+    column(4,numericInput("TD.Genera", label = "TD.Genera", value = NULL)),
+    column(4,numericInput("ASD.Genera", label = "ASD.Genera", value = NULL)),
+    column(4,numericInput("venn_diagram", label = "venn_diagram", value = NULL))
     ),
 
     # Show a plot of the generated distribution
@@ -188,19 +174,20 @@ server <- function(input, output, session) {
 shinyApp(ui, server)
 ```
 
+Graphs of Abundance Versus Demographics (Not sure how to change the colors for age)
 ```{r, eval=F, echo=T}
 ui <- dashboardPage(
-  dashboardHeader(title = "Abundance"),
+  dashboardHeader(title = "Abundance Versus Demographics"),
   dashboardSidebar(),
   dashboardBody(
-  selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
-  selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+  selectInput("x", "Select X Variable", choices = c("age", "gender"), selected = "age"),
+  selectInput("y", "Select Y Variable", choices = c("abundance"), selected = "abundance"),
   plotOutput("plot", width = "500px", height = "400px"))
 )
 
 server <- function(input, output, session) { 
   output$plot <- renderPlot({
-  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  ggplot(demographics_and_abundance, aes_string(x = input$x, y = input$y, fill= as.factor("abundance"))) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
   })
   session$onSessionEnded(stopApp)
   }
