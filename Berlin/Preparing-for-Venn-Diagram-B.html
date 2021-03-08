@@ -243,6 +243,7 @@ both_venn</code></pre>
 ##  9 Faecaliba…          3 Oscilliba… &lt;NA&gt;     ER4    b               193 TRUE    
 ## 10 Faecaliba…          3 Desulfovi… piger    &lt;NA&gt;   b                 3 TRUE    
 ## # … with 19,470,913 more rows</code></pre>
+<pre class="r"><code>#write.csv(both_venn, file = &quot;both_venn.csv&quot;, row.names = FALSE)</code></pre>
 <pre class="r"><code>both_venn$genus_td &lt;- as.factor(both_venn$genus_td)
 both_venn$genus_asd &lt;- as.factor(both_venn$genus_asd)</code></pre>
 <pre class="r"><code>both_venn2 &lt;- 
@@ -252,6 +253,7 @@ both_venn$genus_asd &lt;- as.factor(both_venn$genus_asd)</code></pre>
   &quot;TD Genera&quot; = both_venn2$genus_td,
   &quot;ASD Genera&quot; = both_venn2$genus_asd
 )</code></pre>
+<pre class="r"><code>#write.csv(venn_data, file = &quot;venn_data.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 
 

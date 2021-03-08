@@ -1,0 +1,65 @@
+---
+title: "Heatmap Copy"
+output: html_document
+---
+
+```{r}
+getwd()
+```
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+```{r}
+microbiome_untidy <- read_csv(here("Berlin/Copy_files_csv/ASD meta abundance 2.csv"))
+```
+
+```{r}
+microbiome_untidy <- janitor::clean_names(microbiome_untidy)
+microbiome_untidy
+```
+
+```{r}
+microbiome_longer <- microbiome_untidy %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>%
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash) %>% 
+  mutate(species = ifelse(species == genus, NA, species))
+microbiome_longer
+```
+
+```{r}
+microbiome_avg_long <- microbiome_longer %>% 
+  group_by(genus, condition) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  select(genus, condition, avg_abundance)
+microbiome_avg_long
+```
+
+```{r}
+microbiome_wider <- microbiome_avg_long %>% 
+  pivot_wider(names_from = "condition", values_from = "avg_abundance")
+microbiome_wider
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+

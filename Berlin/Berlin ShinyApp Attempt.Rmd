@@ -4,11 +4,6 @@ output:
   html_document: 
     keep_md: yes
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
@@ -34,11 +29,15 @@ getwd()
 
 
 ```{r}
-microbiome <- read_csv(here("Berlin/a_ref_microbiome.csv"))
-asd_group <- read_csv(here("Berlin/a_ref_asd_group.csv"))
-td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
-microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
-unique_genera <- read_csv(here("Berlin/unique_genera.csv"))
+microbiome <- read_csv(here("Berlin/Copy_others/Ally/microbiome copy.csv"))
+ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
+microbiome_diversity <- read_csv(here("Berlin/Copy_others/Ally/microbiome_diversity copy.csv"))
+asd_group <- read_csv(here("Berlin/Copy_others/Ally/asd_group copy.csv"))
+td_group <- read_csv(here("Berlin/Copy_others/Ally/td_group copy.csv"))
+asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
+td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
+unique_genera <- read_csv(here("Berlin/Copy_others/Ally/unique_genera.csv"))
+demographics <- read_csv(here("Berlin/Copy_others/Ally/demographics_tidy copy.csv"))
 ```
 Graphs Comparing TD and ASD Groups (Unfinished)
 ```{r, eval=F, echo=T}
@@ -66,14 +65,57 @@ server <- function(input, output, session) {
 
 shinyApp(ui, server)
 ```
-Venn Diagram Attempt
+
+```{r, eval=F, echo=T}
+ui <- fluidPage(
+  titlePanel("Venn Diagram"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      
+      checkboxGroupInput(
+        "SELECTION",
+        label = "Select your subsets",
+        choices = list("Web of Science" = "WoS",
+                       "Scopus" = "Scopus",
+                       "Dimensions" = "Dimensions",
+                       "LENS" = "LENS"),
+        selected = c("WoS", "Scopus")
+      ),
+
+    mainPanel(
+      plotOutput("venn")
+    )
+  )
+)
+
+# Define server logic ----
+server <- function(input, output) {
+  
+  output$venn <- renderPlot({
+
+    data <- list(WoS=c("ff", "gg"), Scopus=c("ff", "gg"), Dimensions=c("ff", "gg"), LENS=c("ff", "gg"))
+    
+    # select only those elements that are named in input$SELECTION
+    data <- data[input$SELECTION]
+    
+    # this will not work
+    venn.diagram(data)
+  })
+  
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+```
+
+
+Venn Diagram Attempt (server.R)
 ```{r, eval=F, echo=T}
 shinyServer(function(input, output) {
   
   output$vennDiagram <- renderPlot({
-    
-    # Only plot the Venn diagram if the input values are legit (the input values
-    # are all available and the intersection area isn't greater than either individual set). 
+
     if(as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$adobe)) &&
        as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$google))){
 
@@ -102,7 +144,50 @@ shinyServer(function(input, output) {
 
 ```
 
+Venn Diagram Attempt (ui.R)
+```{r, eval=F, echo=T}
+library(shiny)
+
+shinyUI(fluidPage(
+  
+  titlePanel(h3("Venn Diagram")),
+
+  fluidRow(
+    column(4,numericInput("TD Genera", label = "Total Google Analytics Users", value = NULL)),
+    column(4,numericInput("adobe", label = "Total Adobe Analytics Users", value = NULL)),
+    column(4,numericInput("adobeGoogle", label = "Google Analytics AND Adobe Analytics", value = NULL))
+    ),
+
+    # Show a plot of the generated distribution
+  fluidRow(
+      column(12,plotOutput("vennDiagram"))
+    )
+  )
+)
+
+```
+
+
 Graphs comparing Genus, Species, and Unique Counts
+```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  dashboardHeader(title = "Abundance"),
+  dashboardSidebar(),
+  dashboardBody(
+  selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
+  selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+  plotOutput("plot", width = "500px", height = "400px"))
+)
+
+server <- function(input, output, session) { 
+  output$plot <- renderPlot({
+  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+  session$onSessionEnded(stopApp)
+  }
+shinyApp(ui, server)
+```
+
 ```{r, eval=F, echo=T}
 ui <- dashboardPage(
   dashboardHeader(title = "Abundance"),

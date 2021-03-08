@@ -151,6 +151,9 @@ both_venn
 ```
 
 
+```r
+#write.csv(both_venn, file = "both_venn.csv", row.names = FALSE)
+```
 
 
 ```r
@@ -174,4 +177,7 @@ venn_data <- list(
 ```
 
 
+```r
+#write.csv(venn_data, file = "venn_data.csv", row.names = FALSE)
+```
 
