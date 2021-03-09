@@ -1,6 +1,8 @@
 ---
 title: "Microbiome HeatMap"
-output: html_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +18,7 @@ library(here)
 # ASD/TD Condition Heatmap
 ## Loading the Data
 ```{r}
-microbiome_untidy <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
+microbiome_untidy <- read_csv("data/ASD meta abundance 2.csv")
 ```
 ```{r}
 microbiome_untidy <- janitor::clean_names(microbiome_untidy)
@@ -150,7 +152,7 @@ microbiome_avg_long %>%
 # Age Heatmap
 ## Loading Data
 ```{r}
-demographics <- readr::read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/tidy_data/demographics_and_abundance.csv")
+demographics <- readr::read_csv("data/demographics_and_abundance.csv")
 ```
 
 ```{r}

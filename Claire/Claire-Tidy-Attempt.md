@@ -1,5 +1,5 @@
 ---
-title: "Tidy Attempt"
+title: "Tidy Data"
 output: 
   html_document: 
     keep_md: yes
@@ -54,22 +54,10 @@ library(janitor)
 ##     chisq.test, fisher.test
 ```
 
-```r
-library(here)
-```
-
-```
-## here() starts at C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11
-```
-
-```r
-library(naniar)
-```
-
 
 
 ```r
-asd_microbiome <- read_csv("C:/Users/Claire Chapman/Desktop/BIS15L_Project_Group11/untidy_data/ASD meta abundance 2.csv")
+asd_microbiome <- read_csv("data/ASD meta abundance 2.csv")
 ```
 
 ```
@@ -221,6 +209,6 @@ asd_microbiome_tidy
 #### write
 
 ```r
-write.csv(asd_microbiome_tidy, file = "tidiermicrobiome.csv", row.names = FALSE)
+#write.csv(asd_microbiome_tidy, file = "tidiermicrobiome.csv", row.names = FALSE)
 ```
 
