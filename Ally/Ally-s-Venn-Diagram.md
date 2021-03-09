@@ -23,7 +23,7 @@ library(VennDiagram)
 ## Load the Data
 
 ```r
-tidier_microbiome <- readr::read_csv("tidiermicrobiome.csv")
+tidier_microbiome <- readr::read_csv("data/tidiermicrobiome.csv")
 ```
 
 ```
@@ -62,7 +62,7 @@ tidier_microbiome
 ```
 
 ```r
-asd_tidier <- readr::read_csv("asd_group_tidier.csv")
+asd_tidier <- readr::read_csv("data/asd_group_tidier.csv")
 ```
 
 ```
@@ -102,7 +102,7 @@ asd_tidier
 
 
 ```r
-td_tidier <- readr::read_csv("td_group_tidier.csv")
+td_tidier <- readr::read_csv("data/td_group_tidier.csv")
 ```
 
 ```
@@ -209,7 +209,7 @@ venn_data <- list(
 
 
 ```r
-ggvenn(venn_data, fill_color = c("yellow", "turquoise1"))
+ggvenn(venn_data, fill_color = c("darkred", "skyblue4"))
 ```
 
 ![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
@@ -232,7 +232,7 @@ grid.newpage()
 draw.pairwise.venn(area1 = 1264,                      
                    area2 = 1101,
                    cross.area = 1068, 
-                   fill = c("yellow", "turquoise1"), 
+                   fill = c("darkred", "skyblue4"), 
                    category = c("TD Genera", "ASD Genera"))
 ```
 
@@ -274,7 +274,7 @@ unique_genera
 unique_genera %>% 
   ggplot(aes(x = unique_names, y = unique_counts, fill = unique_names)) +
   geom_col(color = "black") + 
-  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  scale_fill_manual(values = c("darkred", "skyblue4")) +
   theme_linedraw() +
   labs(title = "Number of Unique Genera Per Group",
        x = NULL,
@@ -295,7 +295,7 @@ both_venn$condition <- str_to_upper(both_venn$condition, locale = "en")
 ### Abundance Data
 
 ```r
-asd <- readr::read_csv("ASD_meta_abundance_2.csv")
+asd <- readr::read_csv("data/ASD_meta_abundance_2.csv")
 ```
 
 ```
@@ -337,6 +337,7 @@ asd
 ## #   B152 <dbl>, B156 <dbl>, B158 <dbl>, B164 <dbl>
 ```
 
+
 ```r
 asd2 <- 
   asd %>% 
@@ -373,7 +374,7 @@ asd2
 ###Demographics data
 
 ```r
-demographics <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/untidy_data/demographics.csv")
+demographics <- readr::read_csv("data/demographics.csv")
 ```
 
 ```
@@ -471,7 +472,7 @@ demo_abundance <- full_join(asd2, demographics2, by = "sample_id")
 
 
 ```r
-write.csv(demo_abundance, file = "demographics_and_abundance.csv", row.names = FALSE)
+#write.csv(demo_abundance, file = "demographics_and_abundance.csv", row.names = FALSE)
 ```
 
 
@@ -545,7 +546,7 @@ demo_venn_data <- list(
 
 
 ```r
-ggvenn(demo_venn_data, fill_color = c("yellow", "turquoise1"))
+ggvenn(demo_venn_data, fill_color = c("darkred", "skyblue4"))
 ```
 
 ![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
@@ -556,7 +557,7 @@ grid.newpage()
 draw.pairwise.venn(area1 = 652+643,                      
                    area2 = 644,
                    cross.area = 643, 
-                   fill = c("yellow", "turquoise1"), 
+                   fill = c("darkred", "skyblue4"), 
                    category = c("Male Genera", "Female Genera"))
 ```
 
@@ -565,6 +566,39 @@ draw.pairwise.venn(area1 = 652+643,
 ```
 ## (polygon[GRID.polygon.117], polygon[GRID.polygon.118], polygon[GRID.polygon.119], polygon[GRID.polygon.120], text[GRID.text.121], text[GRID.text.122], lines[GRID.lines.123], text[GRID.text.124], text[GRID.text.125], text[GRID.text.126])
 ```
+## Make Bar Graphs
+
+```r
+unique_gender <- c("Male", "Female")
+unique_counts4 <- c(652, 1)
+unique_gender <- data_frame(unique_gender, unique_counts4)
+unique_gender
+```
+
+```
+## # A tibble: 2 x 2
+##   unique_gender unique_counts4
+##   <chr>                  <dbl>
+## 1 Male                     652
+## 2 Female                     1
+```
+
+
+```r
+unique_gender %>% 
+  ggplot(aes(x = unique_gender, y = unique_counts4, fill = unique_gender)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("darkred", "skyblue4")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Genera by Sex",
+       x = NULL,
+       y = "Unique Genera ") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+
+
 ## Venn Diagram by Age Group
 
 ```r
@@ -594,10 +628,10 @@ age_venn_data <- list(
 
 
 ```r
-ggvenn(age_venn_data, fill_color = c("yellow", "turquoise1"))
+ggvenn(age_venn_data, fill_color = c("darkred", "skyblue4"))
 ```
 
-![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-32-1.png)<!-- -->
 
 ## Make COOLER Venn Diagram 
 
@@ -606,22 +640,53 @@ grid.newpage()
 draw.pairwise.venn(area1 = 359+926,                      
                    area2 = 926+11,
                    cross.area = 926, 
-                   fill = c("yellow", "turquoise1"), 
+                   fill = c("darkred", "skyblue4"), 
                    category = c("Younger Genera", "Older Genera"))
 ```
 
-![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-33-1.png)<!-- -->
 
 ```
-## (polygon[GRID.polygon.151], polygon[GRID.polygon.152], polygon[GRID.polygon.153], polygon[GRID.polygon.154], text[GRID.text.155], text[GRID.text.156], lines[GRID.lines.157], text[GRID.text.158], text[GRID.text.159], text[GRID.text.160])
+## (polygon[GRID.polygon.206], polygon[GRID.polygon.207], polygon[GRID.polygon.208], polygon[GRID.polygon.209], text[GRID.text.210], text[GRID.text.211], lines[GRID.lines.212], text[GRID.text.213], text[GRID.text.214], text[GRID.text.215])
 ```
+## Make Bar Graphs
+
+```r
+unique_age <- c("Younger", "Older")
+unique_counts3 <- c(359, 11)
+unique_age <- data_frame(unique_age, unique_counts3)
+unique_age
+```
+
+```
+## # A tibble: 2 x 2
+##   unique_age unique_counts3
+##   <chr>               <dbl>
+## 1 Younger               359
+## 2 Older                  11
+```
+
+
+```r
+unique_age %>% 
+  ggplot(aes(x = unique_age, y = unique_counts3, fill = unique_age)) +
+  geom_col(color = "black") + 
+  scale_fill_manual(values = c("darkred", "skyblue4")) +
+  theme_linedraw() +
+  labs(title = "Number of Unique Genera Per Age Group",
+       x = NULL,
+       y = "Unique Genera ") +
+  theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
+```
+
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-35-1.png)<!-- -->
 
 
 #Venn Diagram of Species (NOTE to Berlin: The following are 3 ways of displaying the same information)
 ## Prep the data
 
 ```r
-asd_microbiome <- read_csv("ASD_meta_abundance_2.csv")
+asd_microbiome <- read_csv("data/ASD_meta_abundance_2.csv")
 ```
 
 ```
@@ -743,10 +808,10 @@ species_venn_data2 <- list(
 
 
 ```r
-ggvenn(species_venn_data2, fill_color = c("yellow", "turquoise1"))
+ggvenn(species_venn_data2, fill_color = c("darkred", "skyblue4"))
 ```
 
-![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-39-1.png)<!-- -->
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-43-1.png)<!-- -->
 ## Make COOLER Venn Diagram
 
 ```r
@@ -754,14 +819,14 @@ grid.newpage()
 draw.pairwise.venn(area1 = (766+3591),                      
                    area2 = (172 + 3591),
                    cross.area = 3591, 
-                   fill = c("yellow", "turquoise1"), 
+                   fill = c("darkred", "skyblue4"), 
                    category = c("TD Species", "ASD Species"))
 ```
 
-![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-40-1.png)<!-- -->
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-44-1.png)<!-- -->
 
 ```
-## (polygon[GRID.polygon.185], polygon[GRID.polygon.186], polygon[GRID.polygon.187], polygon[GRID.polygon.188], text[GRID.text.189], text[GRID.text.190], lines[GRID.lines.191], text[GRID.text.192], text[GRID.text.193], text[GRID.text.194])
+## (polygon[GRID.polygon.295], polygon[GRID.polygon.296], polygon[GRID.polygon.297], polygon[GRID.polygon.298], text[GRID.text.299], text[GRID.text.300], lines[GRID.lines.301], text[GRID.text.302], text[GRID.text.303], text[GRID.text.304])
 ```
 
 
@@ -786,7 +851,7 @@ unique_species
 unique_species %>% 
   ggplot(aes(x = unique_names2, y = unique_counts2, fill = unique_names2)) +
   geom_col(color = "black") + 
-  scale_fill_manual(values = c("turquoise1", "yellow")) +
+  scale_fill_manual(values = c("darkred", "skyblue4")) +
   theme_linedraw() +
   labs(title = "Number of Unique Species Per Group",
        x = NULL,
@@ -794,5 +859,5 @@ unique_species %>%
   theme(plot.title = element_text(size = rel(1.5), hjust = 0.5)) 
 ```
 
-![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-42-1.png)<!-- -->
+![](Ally-s-Venn-Diagram_files/figure-html/unnamed-chunk-46-1.png)<!-- -->
 

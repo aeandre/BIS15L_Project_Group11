@@ -19,7 +19,7 @@ library(naniar)
 ## Load the Data
 
 ```r
-asd <- readr::read_csv("ASD_meta_abundance_2.csv")
+asd <- readr::read_csv("data/ASD_meta_abundance_2.csv")
 asd
 ```
 
@@ -294,23 +294,23 @@ microbiome_diversity %>%
 ## Exporting CSVs
 
 ```r
-write.csv(asd_tidy4, file = "microbiome.csv", row.names = FALSE)
+#write.csv(asd_tidy4, file = "microbiome.csv", row.names = FALSE)
 ```
 
 
 ```r
-write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
+#write.csv(asd_group, file = "asd_group.csv", row.names = FALSE)
 ```
 
 
 ```r
-write.csv(td_group, file = "td_group.csv", row.names = FALSE)
+#write.csv(td_group, file = "td_group.csv", row.names = FALSE)
 ```
 
 ## Splitting up Claire's tidy Data
 
 ```r
-tidier_microbiome <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv")
+tidier_microbiome <- readr::read_csv("data/tidiermicrobiome.csv")
 ```
 
 ```
@@ -401,13 +401,13 @@ td_group_tidier
 
 
 ```r
-write.csv(td_group_tidier, file = "td_group_tidier.csv", row.names = FALSE)
+#write.csv(td_group_tidier, file = "td_group_tidier.csv", row.names = FALSE)
 ```
 
 
 
 ```r
-write.csv(asd_group_tidier, file = "asd_group_tidier.csv", row.names = FALSE)
+#write.csv(asd_group_tidier, file = "asd_group_tidier.csv", row.names = FALSE)
 ```
 
 
@@ -415,7 +415,7 @@ write.csv(asd_group_tidier, file = "asd_group_tidier.csv", row.names = FALSE)
 
 
 ```r
-demographics <- readr::read_csv("/Users/allyandre/Desktop/BIS15L_Project_Group11/untidy_data/demographics.csv")
+demographics <- readr::read_csv("data/demographics.csv")
 ```
 
 ```
@@ -485,7 +485,7 @@ demographics2
 
 
 ```r
-write.csv(demographics2, file = "demographics_tidy.csv", row.names = FALSE)
+#write.csv(demographics2, file = "demographics_tidy.csv", row.names = FALSE)
 ```
 
 

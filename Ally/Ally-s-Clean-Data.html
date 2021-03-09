@@ -361,7 +361,7 @@ library(naniar)</code></pre>
 </div>
 <div id="load-the-data" class="section level2">
 <h2>Load the Data</h2>
-<pre class="r"><code>asd &lt;- readr::read_csv(&quot;ASD_meta_abundance_2.csv&quot;)
+<pre class="r"><code>asd &lt;- readr::read_csv(&quot;data/ASD_meta_abundance_2.csv&quot;)
 asd</code></pre>
 <pre><code>## # A tibble: 5,619 x 61
 ##    Taxonomy       A3    A5    A6    A9   A31   A51   A52   A53   A54   A59   A67
@@ -562,13 +562,13 @@ microbiome_diversity &lt;-
 </div>
 <div id="exporting-csvs" class="section level2">
 <h2>Exporting CSVs</h2>
-<pre class="r"><code>write.csv(asd_tidy4, file = &quot;microbiome.csv&quot;, row.names = FALSE)</code></pre>
-<pre class="r"><code>write.csv(asd_group, file = &quot;asd_group.csv&quot;, row.names = FALSE)</code></pre>
-<pre class="r"><code>write.csv(td_group, file = &quot;td_group.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(asd_tidy4, file = &quot;microbiome.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(asd_group, file = &quot;asd_group.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(td_group, file = &quot;td_group.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 <div id="splitting-up-claires-tidy-data" class="section level2">
 <h2>Splitting up Claire’s tidy Data</h2>
-<pre class="r"><code>tidier_microbiome &lt;- readr::read_csv(&quot;/Users/allyandre/Desktop/BIS15L_Project_Group11/tidy_data/tidiermicrobiome.csv&quot;)</code></pre>
+<pre class="r"><code>tidier_microbiome &lt;- readr::read_csv(&quot;data/tidiermicrobiome.csv&quot;)</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
@@ -631,10 +631,10 @@ td_group_tidier</code></pre>
 ##  9 Faecalibacterium prausnitzii &lt;NA&gt;   a                 54      5064 TRUE    
 ## 10 Faecalibacterium prausnitzii &lt;NA&gt;   a                 59      6359 TRUE    
 ## # … with 139,850 more rows</code></pre>
-<pre class="r"><code>write.csv(td_group_tidier, file = &quot;td_group_tidier.csv&quot;, row.names = FALSE)</code></pre>
-<pre class="r"><code>write.csv(asd_group_tidier, file = &quot;asd_group_tidier.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(td_group_tidier, file = &quot;td_group_tidier.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(asd_group_tidier, file = &quot;asd_group_tidier.csv&quot;, row.names = FALSE)</code></pre>
 <p>##Tidy Demographics Info</p>
-<pre class="r"><code>demographics &lt;- readr::read_csv(&quot;/Users/allyandre/Desktop/BIS15L_Project_Group11/untidy_data/demographics.csv&quot;)</code></pre>
+<pre class="r"><code>demographics &lt;- readr::read_csv(&quot;data/demographics.csv&quot;)</code></pre>
 <pre><code>## 
 ## ── Column specification ────────────────────────────────────────────────────────
 ## cols(
@@ -683,7 +683,7 @@ demographics2</code></pre>
 ##  9 A164      Male       8
 ## 10 A165      Male       7
 ## # … with 50 more rows</code></pre>
-<pre class="r"><code>write.csv(demographics2, file = &quot;demographics_tidy.csv&quot;, row.names = FALSE)</code></pre>
+<pre class="r"><code>#write.csv(demographics2, file = &quot;demographics_tidy.csv&quot;, row.names = FALSE)</code></pre>
 </div>
 
 
