@@ -635,7 +635,7 @@ species_venn_data2 <- list(
 ## General Comparison of unique species composition between ASD and TD patients
 
 ```r
-ggvenn(species_venn_data2, fill_color = c("yellow", "turquoise1"))
+ggvenn(species_venn_data2, fill_color = c("red", "blue"))
 ```
 
 ![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
@@ -648,7 +648,7 @@ grid.newpage()
 draw.pairwise.venn(area1 = (766+3591),                      
                    area2 = (172 + 3591),
                    cross.area = 3591, 
-                   fill = c("yellow", "turquoise1"), 
+                   fill = c("red", "blue"), 
                    category = c("TD Species", "ASD Species"))
 ```
 
