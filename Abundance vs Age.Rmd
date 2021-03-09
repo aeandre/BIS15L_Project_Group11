@@ -1,0 +1,48 @@
+---
+title: "Abundance vs Age"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## load library
+```{r}
+library(tidyverse)
+library(here)
+```
+
+```{r}
+setwd("/Users/lonubla/Desktop/BIS15L_Project_Group11-main/BIS15L_Project_Group11-main/tidy_data")
+getwd()
+```
+
+
+```{r}
+demo_abund <- readr::read_csv(here("/Users/lonubla/Desktop/BIS15L_Project_Group11-main/BIS15L_Project_Group11-main/tidy_data/demographics_and_abundance.csv"))
+```
+```{r}
+abund_vs_age <- demo_abund%>%
+  select(-gender)
+```
+
+```{r}
+names(abund_vs_age)
+```
+```{r}
+view(abund_vs_age)
+```
+
+
+### Number of individuals in each genus
+```{r}
+abund_vs_age%>%
+  group_by(age)%>%
+  summarise(avg_abund=mean(abundance, na.rm = T))%>%
+  ggplot(aes(x=factor(age), y=avg_abund))+ geom_col(fill="darkred")+ 
+  scale_fill_manual()+
+  labs(title = "Age vs Abundance", x = "Age", y = "Count")
+```

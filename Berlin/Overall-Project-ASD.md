@@ -436,10 +436,10 @@ venn_data <- list(
 ## General Comparison of Genome Overlap between ASD and TD patients
 
 ```r
-ggvenn(venn_data, fill_color = c("red", "blue"))
+ggvenn(venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
 ## General Comparison of Genome Overlap between ASD and TD patients to Scale
 
 ```r
@@ -447,11 +447,11 @@ grid.newpage()
 draw.pairwise.venn(area1 = 1264,                      
                    area2 = 1101,
                    cross.area = 1068, 
-                   fill = c("red", "blue"), 
+                   fill = c("darkred", "deepskyblue4"), 
                    category = c("TD Genera", "ASD Genera"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
 
 ```
 ## (polygon[GRID.polygon.25], polygon[GRID.polygon.26], polygon[GRID.polygon.27], polygon[GRID.polygon.28], text[GRID.text.29], text[GRID.text.30], lines[GRID.lines.31], text[GRID.text.32], text[GRID.text.33], text[GRID.text.34])
@@ -547,10 +547,10 @@ demo_venn_data <- list(
 
 
 ```r
-ggvenn(demo_venn_data, fill_color = c("red", "blue"))
+ggvenn(demo_venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
 
 ## General Comparison of Genome Overlap between Gender to Scale
 
@@ -559,11 +559,11 @@ grid.newpage()
 draw.pairwise.venn(area1 = 652+643,                      
                    area2 = 644,
                    cross.area = 643, 
-                   fill = c("red", "blue"), 
+                   fill = c("darkred", "deepskyblue4"), 
                    category = c("Male Genera", "Female Genera"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
 
 ```
 ## (polygon[GRID.polygon.59], polygon[GRID.polygon.60], polygon[GRID.polygon.61], polygon[GRID.polygon.62], text[GRID.text.63], text[GRID.text.64], lines[GRID.lines.65], text[GRID.text.66], text[GRID.text.67], text[GRID.text.68])
@@ -600,10 +600,10 @@ age_venn_data <- list(
 
 
 ```r
-ggvenn(age_venn_data, fill_color = c("red", "blue"))
+ggvenn(age_venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 ## General Comparison of Genome Overlap between age groups to Scale
 
 ```r
@@ -611,11 +611,11 @@ grid.newpage()
 draw.pairwise.venn(area1 = 359+926,                      
                    area2 = 926+11,
                    cross.area = 926, 
-                   fill = c("red", "blue"), 
+                   fill = c("darkred", "deepskyblue4"), 
                    category = c("Younger Genera", "Older Genera"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
 
 ```
 ## (polygon[GRID.polygon.93], polygon[GRID.polygon.94], polygon[GRID.polygon.95], polygon[GRID.polygon.96], text[GRID.text.97], text[GRID.text.98], lines[GRID.lines.99], text[GRID.text.100], text[GRID.text.101], text[GRID.text.102])
@@ -635,10 +635,10 @@ species_venn_data2 <- list(
 ## General Comparison of unique species composition between ASD and TD patients
 
 ```r
-ggvenn(species_venn_data2, fill_color = c("red", "blue"))
+ggvenn(species_venn_data2, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
 
 
 ## General Comparison of unique species composition between ASD and TD patients to Scale
@@ -648,11 +648,11 @@ grid.newpage()
 draw.pairwise.venn(area1 = (766+3591),                      
                    area2 = (172 + 3591),
                    cross.area = 3591, 
-                   fill = c("red", "blue"), 
+                   fill = c("darkred", "deepskyblue4"), 
                    category = c("TD Species", "ASD Species"))
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 ```
 ## (polygon[GRID.polygon.127], polygon[GRID.polygon.128], polygon[GRID.polygon.129], polygon[GRID.polygon.130], text[GRID.text.131], text[GRID.text.132], lines[GRID.lines.133], text[GRID.text.134], text[GRID.text.135], text[GRID.text.136])
@@ -680,7 +680,7 @@ microbiome_big_diff_long %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-28-1.png)<!-- -->
 
 
 ## Heatmap of the 20 most abundant genera
@@ -696,7 +696,7 @@ microbiome_avg_long %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
 ## Age Heatmaps
 
@@ -714,7 +714,7 @@ big_demographics_A %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-30-1.png)<!-- -->
 
 
 ## Heatmap of the 20 most abundant genera in group B
@@ -730,6 +730,6 @@ big_demographics_B %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
-![](Overall-Project-ASD-Gut_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
 
