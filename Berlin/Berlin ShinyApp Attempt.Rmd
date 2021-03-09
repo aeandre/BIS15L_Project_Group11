@@ -4,11 +4,6 @@ output:
   html_document: 
     keep_md: yes
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 ## R Markdown
 
 This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
@@ -24,8 +19,8 @@ library(ggvenn)
 library(VennDiagram)
 library(shiny)
 library(shinydashboard)
-library(trekcolors)
 library(ggplot2)
+library(mwshiny)
 ``` 
 
 ```{r}
@@ -34,53 +29,88 @@ getwd()
 
 
 ```{r}
-microbiome <- read_csv(here("Berlin/a_ref_microbiome.csv"))
-asd_group <- read_csv(here("Berlin/a_ref_asd_group.csv"))
-td_group <- read_csv(here("Berlin/a_ref_td_group.csv"))
-microbiome_diversity <- read_csv(here("Berlin/a_ref_microbiome_diversity.csv"))
-unique_genera <- read_csv(here("Berlin/unique_genera.csv"))
+microbiome <- read_csv(here("Berlin/Copy_others/Ally/microbiome copy.csv"))
+ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
+microbiome_diversity <- read_csv(here("Berlin/Copy_others/Ally/microbiome_diversity copy.csv"))
+asd_group <- read_csv(here("Berlin/Copy_others/Ally/asd_group copy.csv"))
+td_group <- read_csv(here("Berlin/Copy_others/Ally/td_group copy.csv"))
+asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
+td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
+unique_genera <- read_csv(here("Berlin/Copy_others/Ally/unique_genera.csv"))
+demographics <- read_csv(here("Berlin/Copy_others/Ally/microbiome copy.csv"))
+demographics_and_abundance <- read_csv(here("Berlin/Copy_files_csv/demographics copy.csv"))
+#both_venn <- read_csv(here("Berlin/Copy_others/Ally/both_venn copy.csv"))
+#venn_data <- read_csv(here("Berlin/Copy_others/Ally/venn_data copy.csv"))
+microbiome_big_diff <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff copy.csv"))
+microbiome_big_diff_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff_long copy.csv"))
+microbiome_big_diff <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff copy.csv"))
+microbiome_avg_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_avg_long copy.csv"))
+big_demographics_A <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_A copy.csv"))
+big_demographics_B <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_B copy.csv"))
 ```
-Graphs Comparing TD and ASD Groups (Unfinished)
+Heat maps
 ```{r, eval=F, echo=T}
-ui <- fluidPage(    
-  
-  titlePanel("TD and ASD Species/Genus Abundance"), 
-  sidebarLayout(      
-  sidebarPanel(
-  selectInput("genus", "species", " Select Group of Interest:", choices=unique(microbiome_diversity$group)),
-      hr(),
-      helpText("Reference: Zhou Dan et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329")
-    ),
-    mainPanel(
-      plotOutput("Plot")  
-    )
-    )
-    )
-server <- function(input, output, session) {
-  session$onSessionEnded(stopApp)
-  output$Plot <- renderPlot({
-  ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text(angle = 60, hjust = 1)) + theme(plot.title = element_text(size = rel(1.5), hjust = 0.5))+ scale_fill_trek("romulan")
-  })
-  session$onSessionEnded(stopApp)
-  }
 
-shinyApp(ui, server)
 ```
-Venn Diagram Attempt
+
+Venn Diagram Attempt from another source
+```{r, eval=F, echo=T}
+ui <- fluidPage(
+  titlePanel("Venn Diagram"),
+  
+  sidebarLayout(
+    sidebarPanel(
+      
+      checkboxGroupInput(
+        "SELECTION",
+        label = "Select your subsets",
+        choices = list("TD.Genera" = "TD.Genera",
+                       "Scopus" = "Scopus",
+                       "Dimensions" = "Dimensions",
+                       "LENS" = "LENS"),
+        selected = c("WoS", "Scopus")
+      ),
+
+    mainPanel(
+      plotOutput("venn")
+    )
+  )
+)
+
+# Define server logic ----
+server <- function(input, output) {
+  
+  output$venn <- renderPlot({
+
+    data <- list(WoS=c("ff", "gg"), Scopus=c("ff", "gg"), Dimensions=c("ff", "gg"), LENS=c("ff", "gg"))
+    
+    # select only those elements that are named in input$SELECTION
+    data <- data[input$SELECTION]
+    
+    # this will not work
+    venn.diagram(data)
+  })
+  
+}
+
+# Run the app ----
+shinyApp(ui = ui, server = server)
+```
+
+
+Venn Diagram Attempt (server.R) (Doesn't work for some reason?)
 ```{r, eval=F, echo=T}
 shinyServer(function(input, output) {
   
   output$vennDiagram <- renderPlot({
-    
-    # Only plot the Venn diagram if the input values are legit (the input values
-    # are all available and the intersection area isn't greater than either individual set). 
-    if(as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$adobe)) &&
-       as.numeric(req(input$adobeGoogle)) <= as.numeric(req(input$google))){
 
-      draw.pairwise.venn(area1 = as.numeric(input$google),
-                         area2 = as.numeric(input$adobe),
-                         cross.area = as.numeric(input$adobeGoogle),
-                         category = c("Google Analytics","Adobe Analytics"),
+    if(as.numeric(req(input$venn_diagram)) <= as.numeric(req(input$TD.Genera)) &&
+       as.numeric(req(input$venn_diagram)) <= as.numeric(req(input$ASD.Genera))){
+
+      draw.pairwise.venn(area1 = as.numeric(input$TD.Genera),
+                         area2 = as.numeric(input$ASD.Genera),
+                         cross.area = as.numeric(input$venn_diagram), #Fairly sure wrong
+                         category = c("TD.Genera","ASD.Genera"),
                          fill = c("#F29B05","#A1D490"),
                          ext.text = TRUE,
                          ext.percent = c(0.1,0.1,0.1),
@@ -100,7 +130,32 @@ shinyServer(function(input, output) {
   })
 })
 
+shinyApp(ui, server)
 ```
+
+Venn Diagram Attempt (ui.R)
+```{r, eval=F, echo=T}
+library(shiny)
+
+shinyUI(fluidPage(
+  
+  titlePanel(h3("Venn Diagram")),
+
+  fluidRow(
+    column(4,numericInput("TD.Genera", label = "TD.Genera", value = NULL)),
+    column(4,numericInput("ASD.Genera", label = "ASD.Genera", value = NULL)),
+    column(4,numericInput("venn_diagram", label = "venn_diagram", value = NULL))
+    ),
+
+    # Show a plot of the generated distribution
+  fluidRow(
+      column(12,plotOutput("vennDiagram"))
+    )
+  )
+)
+
+```
+
 
 Graphs comparing Genus, Species, and Unique Counts
 ```{r, eval=F, echo=T}
@@ -121,3 +176,115 @@ server <- function(input, output, session) {
   }
 shinyApp(ui, server)
 ```
+
+Graphs of Abundance Versus Demographics (Not sure how to change the colors for age)
+```{r, eval=F, echo=T}
+ui <- dashboardPage(
+  dashboardHeader(title = "Abundance Versus Demographics"),
+  dashboardSidebar(),
+  dashboardBody(
+  selectInput("x", "Select X Variable", choices = c("age", "gender"), selected = "age"),
+  selectInput("y", "Select Y Variable", choices = c("abundance"), selected = "abundance"),
+  plotOutput("plot", width = "500px", height = "400px"))
+)
+
+server <- function(input, output, session) { 
+  output$plot <- renderPlot({
+  ggplot(demographics_and_abundance, aes_string(x = input$x, y = input$y, fill= as.factor("abundance"))) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+  session$onSessionEnded(stopApp)
+  }
+shinyApp(ui, server)
+```
+
+```{r}
+#install.packages("mwshiny")
+```
+
+
+```{r, eval=F, echo=T}
+ui <- fluidPage(    
+  
+  titlePanel("Abundance Comparison"),
+  
+  sidebarLayout(      
+    
+    sidebarPanel(
+      
+        fileInput("file1", "Choose CSV File",
+              multiple = TRUE,
+              accept = c("text/csv",
+                         "text/comma-separated-values,text/plain",
+                         ".csv")),
+        selectInput("dataset","Data:",
+                choices =list(microbiome_diversity = "microbiome_diversity", unique_genera = "unique_genera", demographics_and_abundance = "demographics_and_abundance"), selected=NULL),
+      
+      selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
+      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+      
+      hr(),
+      helpText("Reference: Zhou Dan, et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329
+")
+    ),
+    
+    mainPanel(
+      plotOutput("Plot")  
+    )
+    
+  )
+)
+
+server <- function(input, output) {
+  
+  output$Plot <- renderPlot({
+    
+    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+}
+
+shinyApp(ui, server)
+```
+
+```{r}
+ui <- fluidPage(    
+  
+  titlePanel("Abundance Comparison"),
+  
+  sidebarLayout(      
+    
+    sidebarPanel(
+      
+        fileInput("file1", "Choose CSV File",
+              multiple = TRUE,
+              accept = c("text/csv",
+                         "text/comma-separated-values,text/plain",
+                         ".csv")),
+        selectInput("dataset","Data:",
+                choices =list(microbiome_diversity = "microbiome_diversity", unique_genera = "unique_genera", demographics_and_abundance = "demographics_and_abundance"), selected=NULL),
+      
+      selectInput("x", "Select X Variable", choices = c("group", "unique_names"), selected = "group"),
+      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+      
+      hr(),
+      helpText("Reference: Zhou Dan, et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329
+") #This references where data came from
+    ),
+    
+    mainPanel(
+      plotOutput("Plot")  
+    )
+    
+  )
+)
+
+server <- function(input, output) {
+  
+  output$Plot <- renderPlot({
+    
+    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+}
+
+shinyApp(ui, server)
+```
+
