@@ -19,8 +19,8 @@ library(ggvenn)
 library(VennDiagram)
 library(shiny)
 library(shinydashboard)
-library(trekcolors)
 library(ggplot2)
+library(mwshiny)
 ``` 
 
 ```{r}
@@ -37,7 +37,8 @@ td_group <- read_csv(here("Berlin/Copy_others/Ally/td_group copy.csv"))
 asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
 td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
 unique_genera <- read_csv(here("Berlin/Copy_others/Ally/unique_genera.csv"))
-demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
+demographics <- read_csv(here("Berlin/Copy_others/Ally/microbiome copy.csv"))
+demographics_and_abundance <- read_csv(here("Berlin/Copy_files_csv/demographics copy.csv"))
 #both_venn <- read_csv(here("Berlin/Copy_others/Ally/both_venn copy.csv"))
 #venn_data <- read_csv(here("Berlin/Copy_others/Ally/venn_data copy.csv"))
 microbiome_big_diff <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff copy.csv"))
@@ -195,3 +196,95 @@ server <- function(input, output, session) {
   }
 shinyApp(ui, server)
 ```
+
+```{r}
+#install.packages("mwshiny")
+```
+
+
+```{r, eval=F, echo=T}
+ui <- fluidPage(    
+  
+  titlePanel("Abundance Comparison"),
+  
+  sidebarLayout(      
+    
+    sidebarPanel(
+      
+        fileInput("file1", "Choose CSV File",
+              multiple = TRUE,
+              accept = c("text/csv",
+                         "text/comma-separated-values,text/plain",
+                         ".csv")),
+        selectInput("dataset","Data:",
+                choices =list(microbiome_diversity = "microbiome_diversity", unique_genera = "unique_genera", demographics_and_abundance = "demographics_and_abundance"), selected=NULL),
+      
+      selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
+      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+      
+      hr(),
+      helpText("Reference: Zhou Dan, et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329
+")
+    ),
+    
+    mainPanel(
+      plotOutput("Plot")  
+    )
+    
+  )
+)
+
+server <- function(input, output) {
+  
+  output$Plot <- renderPlot({
+    
+    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+}
+
+shinyApp(ui, server)
+```
+
+```{r}
+ui <- fluidPage(    
+  
+  titlePanel("Abundance Comparison"),
+  
+  sidebarLayout(      
+    
+    sidebarPanel(
+      
+        fileInput("file1", "Choose CSV File",
+              multiple = TRUE,
+              accept = c("text/csv",
+                         "text/comma-separated-values,text/plain",
+                         ".csv")),
+        selectInput("dataset","Data:",
+                choices =list(microbiome_diversity = "microbiome_diversity", unique_genera = "unique_genera", demographics_and_abundance = "demographics_and_abundance"), selected=NULL),
+      
+      selectInput("x", "Select X Variable", choices = c("group", "unique_names"), selected = "group"),
+      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+      
+      hr(),
+      helpText("Reference: Zhou Dan, et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329
+") #This references where data came from
+    ),
+    
+    mainPanel(
+      plotOutput("Plot")  
+    )
+    
+  )
+)
+
+server <- function(input, output) {
+  
+  output$Plot <- renderPlot({
+    
+    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  })
+}
+
+shinyApp(ui, server)
+```
+
