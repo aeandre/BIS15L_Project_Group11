@@ -1,0 +1,115 @@
+---
+title: "Heatmap_csv_write"
+output: 
+  html_document: 
+    keep_md: yes
+---
+# Microbiome Heatmapt
+Here I am using Claire's data to write csv files to input into the final project.
+
+Loading the libraries:
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+```
+
+# ASD/TD Condition Heatmap
+## Loading the data
+```{r}
+microbiome_untidy <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
+```
+```{r}
+microbiome_untidy <- janitor::clean_names(microbiome_untidy)
+microbiome_untidy
+```
+```{r}
+microbiome_longer <- microbiome_untidy %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1) %>%
+  separate(taxonomy, into = c("genus", "species"), sep = ";s__") %>% 
+  separate(genus, into = c("trash", "genus"), sep = "__") %>% 
+  separate(species, into = c("species", "strain"), sep = " sp. ") %>%
+  separate(species, into = c("extra_genus", "species"), sep = " ") %>% 
+  mutate(cultured = ifelse(extra_genus == "uncultured", FALSE, TRUE)) %>% 
+  select(- extra_genus, - trash) %>% 
+  mutate(species = ifelse(species == genus, NA, species))
+microbiome_longer
+```
+
+```{r}
+microbiome_avg_long <- microbiome_longer %>% 
+  group_by(genus, condition) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  select(genus, condition, avg_abundance)
+microbiome_avg_long
+```
+```{r}
+#write.csv(microbiome_avg_long, file = "microbiome_avg_long.csv", row.names = FALSE)
+```
+
+```{r}
+microbiome_wider <- microbiome_avg_long %>% 
+  pivot_wider(names_from = "condition", values_from = "avg_abundance")
+microbiome_wider
+```
+```{r}
+microbiome_difference <- microbiome_wider %>% 
+  group_by(genus) %>% 
+  summarise(A = mean(a, na.rm = T), B = mean(b, na.rm = T)) %>% 
+  mutate(difference = abs(A-B)) %>% 
+  arrange(desc(difference))
+microbiome_difference
+```
+```{r}
+microbiome_big_diff <- microbiome_difference %>%
+  top_n(20)
+microbiome_big_diff
+```
+```{r}
+microbiome_big_diff_long <- microbiome_big_diff %>% 
+  select(-difference) %>% 
+  pivot_longer(c("A", "B"), names_to = "condition", values_to = "avg_abundance")
+microbiome_big_diff_long
+```
+```{r}
+#write.csv(microbiome_big_diff_long, file = "microbiome_big_diff_long.csv", row.names = FALSE)
+```
+
+```{r}
+demographics <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
+```
+```{r}
+demographics <- janitor::clean_names(demographics)
+demographics
+```
+```{r}
+demographics_untidy <- demographics %>%
+  separate(sample_id, into = c("condition", "patient_id"), sep = 1)
+demographics_untidy
+```
+```{r}
+big_demographics_A <- demographics_untidy %>%
+  filter(condition == "A") %>% 
+  group_by(genus, age) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(avg_abundance))
+big_demographics_A
+```
+```{r}
+#write.csv(big_demographics_A, file = "big_demographics_A.csv", row.names = FALSE)
+```
+
+```{r}
+big_demographics_B <- demographics_untidy %>%
+  filter(condition == "B") %>% 
+  group_by(genus, age) %>% 
+  summarise(avg_abundance = mean(abundance, na.rm = T)) %>% 
+  arrange(desc(avg_abundance))
+big_demographics_B
+```
+```{r}
+#write.csv(big_demographics_B, file = "big_demographics_B.csv", row.names = FALSE)
+```
+

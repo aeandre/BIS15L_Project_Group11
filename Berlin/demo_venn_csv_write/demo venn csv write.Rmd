@@ -1,0 +1,133 @@
+---
+title: "Demo venn csv write"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(here)
+library(naniar)
+library(ggvenn)
+library(VennDiagram)
+library(shiny)
+library(shinydashboard)
+library(ggplot2)
+library(purrr)
+library(dplyr)
+```
+
+## Note: This data is from a copy of Ally's ASD_meta_abundance_2 file, and I am writing csv files to simplify the process and input into the final project.
+
+```{r}
+ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
+demographics <- read_csv(here("Berlin/Copy_files_csv/demographics_untidy copy.csv"))
+```
+
+##Preparation of data for Venn Diagrams that compares genera composition between gender
+#Preparing ASD data:
+```{r}
+ASD_meta_adundance
+```
+
+```{r}
+asd2 <- ASD_meta_adundance %>%
+   pivot_longer(-Taxonomy, 
+               names_to = "subject", 
+               values_to = "abundance") %>% 
+  filter(str_detect(Taxonomy, "Unclassified") == FALSE) %>% 
+  separate(Taxonomy, into = c("genus", "species"), sep = ";") %>% 
+  separate(genus, into = c("g", "genus"), sep = "__") %>% 
+  separate(species, into = c("s", "species"), sep = "__") %>% 
+  select( -g, -s, -species) %>% 
+  rename(sample_id = "subject") %>% 
+  filter(abundance !=0)
+asd2
+```
+#Preparing Demographics data:
+```{r}
+demographics
+```
+
+```{r}
+demographics2 <-
+  demographics %>% 
+  clean_names() %>% 
+  filter(metagenomic_sequencing == "Yes") %>% 
+  select(sample_id, gender, age)
+demographics2
+```
+#Joining the two dataframes:
+```{r}
+demo_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
+  select(-c(sample_id, abundance, age))
+demo_venn
+```
+```{r}
+#write.csv(demo_venn, file = "demo_venn.csv", row.names = FALSE)
+```
+
+##ASD_2 B2 build
+```{r}
+ASD_meta_adundance <- janitor::clean_names(ASD_meta_adundance)
+```
+
+#Pivoting out longer and taking out unclassififed data:
+```{r}
+asd_microbiome_longer <- ASD_meta_adundance %>% 
+  pivot_longer(-taxonomy, names_to = "condition", values_to = "abundance")%>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(condition, into = c("condition", "patient_id"), sep = 1)
+asd_microbiome_longer
+```
+
+```{r}
+asd_B2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "b") %>% 
+  rename(tax_asd = "taxonomy") %>% 
+  filter(abundance != 0)
+td_A2 <-
+  asd_microbiome_longer %>% 
+  filter(condition == "a") %>% 
+  rename(tax_td = "taxonomy") %>%
+  filter(abundance != 0)
+```
+
+```{r}
+#write.csv(asd_B2, file = "asd_B2.csv", row.names = FALSE)
+#write.csv(td_A2, file = "td_A2.csv", row.names = FALSE)
+```
+
+
+##Age group csv file write
+```{r}
+asd2 <- 
+  ASD_meta_adundance %>% 
+  pivot_longer(-taxonomy, 
+               names_to = "subject", 
+               values_to = "abundance") %>% 
+  filter(str_detect(taxonomy, "Unclassified") == FALSE) %>% 
+  separate(taxonomy, into = c("genus", "species"), sep = ";") %>% 
+  separate(genus, into = c("g", "genus"), sep = "__") %>% 
+  separate(species, into = c("s", "species"), sep = "__") %>% 
+  select( -g, -s, -species) %>% 
+  rename(sample_id = "subject") %>% 
+  filter(abundance !=0)
+asd2
+```
+
+```{r}
+demographics2 <-
+  demographics %>% 
+  clean_names() %>% 
+  filter(metagenomic_sequencing == "Yes") %>% 
+  select(sample_id, gender, age)
+demographics2
+```
+```{r}
+#write.csv(asd2, file = "asd2.csv", row.names = FALSE)
+#write.csv(demographics2, file = "demographics2.csv", row.names = FALSE)
+```
