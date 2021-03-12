@@ -1,11 +1,13 @@
 ---
-title: "Differences in the Human Gut Microbiome in Children with Autism Spectrum Disorder"
 output: 
   html_document: 
     keep_md: yes
 ---
+---
+# Differences in the Human Gut Microbiome in Children with Autism Spectrum Disorder
 
-(This space likely for notes/explaining what the project is about)
+The study by Zhou Dan et al. examines the abundances of different gut microbiome species in patients with Autism Spectrum Disorder (ASD) and without (TD). We used bar graphs, presented in a Shiny App, Venn diagrams, and heat maps, to compare the microbiome diversity of these two cohorts.
+
 
 ### Loading the libraries
 
@@ -50,7 +52,7 @@ library(here)
 ```
 
 ```
-## here() starts at /Users/Astrobeecal/Desktop/GitHub/BIS15L_Project_Group11
+## here() starts at /Users/Astrobeecal/Desktop/BIS15L_Project_Group11
 ```
 
 ```r
@@ -95,7 +97,7 @@ library(dplyr)
 ### Loading the .csv files
 
 ```r
-ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
+ASD_meta_adundance <- read_csv(here("Final Project/Copy_others copy/Ally/ASD_meta_abundance_2 copy.csv"))
 ```
 
 ```
@@ -109,7 +111,7 @@ ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_
 ```
 
 ```r
-microbiome_diversity <- read_csv(here("Berlin/Copy_others/Ally/microbiome_diversity copy.csv"))
+microbiome_diversity <- read_csv(here("Final Project/Copy_others copy/Ally/microbiome_diversity copy.csv"))
 ```
 
 ```
@@ -123,7 +125,7 @@ microbiome_diversity <- read_csv(here("Berlin/Copy_others/Ally/microbiome_divers
 ```
 
 ```r
-asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
+asd_group_tidier <- read_csv(here("Final Project/Copy_others copy/Ally/asd_group_tidier copy.csv"))
 ```
 
 ```
@@ -141,7 +143,7 @@ asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy
 ```
 
 ```r
-td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
+td_group_tidier <- read_csv(here("Final Project/Copy_others copy/Ally/td_group_tidier copy.csv"))
 ```
 
 ```
@@ -159,7 +161,7 @@ td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.c
 ```
 
 ```r
-demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
+demographics_and_abundance <- read_csv(here("Final Project/Copy_others copy/Ally/demographics_and_abundance copy.csv"))
 ```
 
 ```
@@ -175,7 +177,7 @@ demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographic
 ```
 
 ```r
-demo_venn <- read_csv(here("Berlin/Copy_others/Ally/demo_venn copy.csv"))
+demo_venn <- read_csv(here("Final Project/Copy_others copy/Ally/demo_venn copy.csv"))
 ```
 
 ```
@@ -188,7 +190,7 @@ demo_venn <- read_csv(here("Berlin/Copy_others/Ally/demo_venn copy.csv"))
 ```
 
 ```r
-asd_B2 <- read_csv(here("Berlin/Copy_others/Ally/asd_B2 copy.csv"))
+asd_B2 <- read_csv(here("Final Project/Copy_others copy/Ally/asd_B2 copy.csv"))
 ```
 
 ```
@@ -203,7 +205,7 @@ asd_B2 <- read_csv(here("Berlin/Copy_others/Ally/asd_B2 copy.csv"))
 ```
 
 ```r
-td_A2 <- read_csv(here("Berlin/Copy_others/Ally/td_A2 copy.csv"))
+td_A2 <- read_csv(here("Final Project/Copy_others copy/Ally/td_A2 copy.csv"))
 ```
 
 ```
@@ -218,7 +220,7 @@ td_A2 <- read_csv(here("Berlin/Copy_others/Ally/td_A2 copy.csv"))
 ```
 
 ```r
-asd2 <- read_csv(here("Berlin/Copy_others/Ally/asd2 copy.csv"))
+asd2 <- read_csv(here("Final Project/Copy_others copy/Ally/asd2 copy.csv"))
 ```
 
 ```
@@ -232,7 +234,7 @@ asd2 <- read_csv(here("Berlin/Copy_others/Ally/asd2 copy.csv"))
 ```
 
 ```r
-demographics2 <- read_csv(here("Berlin/Copy_others/Ally/demographics2 copy.csv"))
+demographics2 <- read_csv(here("Final Project/Copy_others copy/Ally/demographics2 copy.csv"))
 ```
 
 ```
@@ -246,7 +248,7 @@ demographics2 <- read_csv(here("Berlin/Copy_others/Ally/demographics2 copy.csv")
 ```
 
 ```r
-microbiome_big_diff_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff_long copy.csv"))
+microbiome_big_diff_long <- read_csv(here("Final Project/Copy_others copy/Claire/microbiome_big_diff_long copy.csv"))
 ```
 
 ```
@@ -260,7 +262,7 @@ microbiome_big_diff_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_
 ```
 
 ```r
-microbiome_avg_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_avg_long copy.csv"))
+microbiome_avg_long <- read_csv(here("Final Project/Copy_others copy/Claire/microbiome_avg_long copy.csv"))
 ```
 
 ```
@@ -274,7 +276,7 @@ microbiome_avg_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_avg_l
 ```
 
 ```r
-big_demographics_A <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_A copy.csv"))
+big_demographics_A <- read_csv(here("Final Project/Copy_others copy/Claire/big_demographics_A copy.csv"))
 ```
 
 ```
@@ -288,7 +290,7 @@ big_demographics_A <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_
 ```
 
 ```r
-big_demographics_B <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_B copy.csv"))
+big_demographics_B <- read_csv(here("Final Project/Copy_others copy/Claire/big_demographics_B copy.csv"))
 ```
 
 ```
@@ -303,7 +305,7 @@ big_demographics_B <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_
 # Shiny
 
 
-## Graphs comparing Genus, Species, and Unique Counts (Unique counts not coming up for some reason)
+## Graphs comparing Genus and Species
 
 ```r
 ui <- fluidPage(    
@@ -314,7 +316,7 @@ ui <- fluidPage(
     
     sidebarPanel(
       selectInput("x", "Select X Variable", choices = c("group"), selected = "group"),
-      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species", "unique_counts"), selected = "n_genus"),
+      selectInput("y", "Select Y Variable", choices = c("n_genus", "n_species"), selected = "n_genus"),
       
       hr(),
       helpText("Reference: Zhou Dan, et al. (2020) Altered gut microbial profile is associated with abnormal metabolism activity of Autism Spectrum Disorder, Gut Microbes, 11:5, 1246-1267, DOI: 10.1080/19490976.2020.1747329
@@ -332,7 +334,7 @@ server <- function(input, output) {
   
   output$Plot <- renderPlot({
     
-    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+    ggplot(microbiome_diversity, aes_string(x = input$x, y = input$y, fill= "group")) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_manual(values = c("darkred","skyblue4"))
   })
   }
 
@@ -353,7 +355,7 @@ ui <- dashboardPage(
 
 server <- function(input, output, session) { 
   output$plot <- renderPlot({
-  ggplot(demographics_and_abundance, aes_string(x = input$x, y = input$y, fill= as.factor("abundance"))) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_brewer(palette = "Set1")
+  ggplot(demographics_and_abundance, aes_string(x = input$x, y = input$y, fill= as.factor("abundance"))) + geom_col(position = "dodge") + theme(axis.text.x = element_text()) + theme(plot.title = element_text(size = rel(1.5)))+ scale_fill_manual(values = "darkred")
   })
   session$onSessionEnded(stopApp)
   }
@@ -363,9 +365,44 @@ shinyApp(ui, server)
 
 # Venn Diagrams of Data
 
+## Building Venn Diagram that compares unique species composition between ASD and TD patients
 
-## Preparation of data for Venn Diagrams that compares genera composition between ASD and TD patients (Note: couldn't use a csv file to cut down chunks that were run because the files were too big)
+```r
+species_venn_data2 <- list(
+  "TD Species" = td_A2$tax_td,
+  "ASD Species" = asd_B2$tax_asd
+)
+```
 
+
+## General Comparison of unique species composition between ASD and TD patients
+
+```r
+ggvenn(species_venn_data2, fill_color = c("darkred", "deepskyblue4"))
+```
+
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-6-1.png)<!-- -->
+
+
+## General Comparison of unique species composition between ASD and TD patients to Scale
+
+```r
+grid.newpage()
+draw.pairwise.venn(area1 = (766+3591),                      
+                   area2 = (172 + 3591),
+                   cross.area = 3591, 
+                   fill = c("darkred", "deepskyblue4"), 
+                   category = c("TD Species", "ASD Species"))
+```
+
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+
+```
+## (polygon[GRID.polygon.25], polygon[GRID.polygon.26], polygon[GRID.polygon.27], polygon[GRID.polygon.28], text[GRID.text.29], text[GRID.text.30], lines[GRID.lines.31], text[GRID.text.32], text[GRID.text.33], text[GRID.text.34])
+```
+
+
+## Preparation of data for Venn Diagrams that compares genera composition between ASD and TD patients
 
 ### Preparing TD data:
 
@@ -439,7 +476,7 @@ venn_data <- list(
 ggvenn(venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-11-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-14-1.png)<!-- -->
 ## General Comparison of Genome Overlap between ASD and TD patients to Scale
 
 ```r
@@ -451,11 +488,12 @@ draw.pairwise.venn(area1 = 1264,
                    category = c("TD Genera", "ASD Genera"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-12-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-15-1.png)<!-- -->
 
 ```
-## (polygon[GRID.polygon.25], polygon[GRID.polygon.26], polygon[GRID.polygon.27], polygon[GRID.polygon.28], text[GRID.text.29], text[GRID.text.30], lines[GRID.lines.31], text[GRID.text.32], text[GRID.text.33], text[GRID.text.34])
+## (polygon[GRID.polygon.59], polygon[GRID.polygon.60], polygon[GRID.polygon.61], polygon[GRID.polygon.62], text[GRID.text.63], text[GRID.text.64], lines[GRID.lines.65], text[GRID.text.66], text[GRID.text.67], text[GRID.text.68])
 ```
+
 
 ### Preparation of data for Venn Diagrams that compares genera composition between gender
 
@@ -550,7 +588,7 @@ demo_venn_data <- list(
 ggvenn(demo_venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-18-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-21-1.png)<!-- -->
 
 ## General Comparison of Genome Overlap between Gender to Scale
 
@@ -563,14 +601,13 @@ draw.pairwise.venn(area1 = 652+643,
                    category = c("Male Genera", "Female Genera"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-19-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
 
 ```
-## (polygon[GRID.polygon.59], polygon[GRID.polygon.60], polygon[GRID.polygon.61], polygon[GRID.polygon.62], text[GRID.text.63], text[GRID.text.64], lines[GRID.lines.65], text[GRID.text.66], text[GRID.text.67], text[GRID.text.68])
+## (polygon[GRID.polygon.93], polygon[GRID.polygon.94], polygon[GRID.polygon.95], polygon[GRID.polygon.96], text[GRID.text.97], text[GRID.text.98], lines[GRID.lines.99], text[GRID.text.100], text[GRID.text.101], text[GRID.text.102])
 ```
 
 ### Preparation of data for Venn Diagrams that compares genera composition between age groups
-
 
 ```r
 age_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
@@ -603,7 +640,8 @@ age_venn_data <- list(
 ggvenn(age_venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-22-1.png)<!-- -->
+![](Overall-Project-ASD_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
+
 ## General Comparison of Genome Overlap between age groups to Scale
 
 ```r
@@ -615,48 +653,12 @@ draw.pairwise.venn(area1 = 359+926,
                    category = c("Younger Genera", "Older Genera"))
 ```
 
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-23-1.png)<!-- -->
-
-```
-## (polygon[GRID.polygon.93], polygon[GRID.polygon.94], polygon[GRID.polygon.95], polygon[GRID.polygon.96], text[GRID.text.97], text[GRID.text.98], lines[GRID.lines.99], text[GRID.text.100], text[GRID.text.101], text[GRID.text.102])
-```
-
-
-## Building Venn Diagram that compares unique species composition between ASD and TD patients
-
-```r
-species_venn_data2 <- list(
-  "TD Species" = td_A2$tax_td,
-  "ASD Species" = asd_B2$tax_asd
-)
-```
-
-
-## General Comparison of unique species composition between ASD and TD patients
-
-```r
-ggvenn(species_venn_data2, fill_color = c("darkred", "deepskyblue4"))
-```
-
-![](Overall-Project-ASD_files/figure-html/unnamed-chunk-25-1.png)<!-- -->
-
-
-## General Comparison of unique species composition between ASD and TD patients to Scale
-
-```r
-grid.newpage()
-draw.pairwise.venn(area1 = (766+3591),                      
-                   area2 = (172 + 3591),
-                   cross.area = 3591, 
-                   fill = c("darkred", "deepskyblue4"), 
-                   category = c("TD Species", "ASD Species"))
-```
-
 ![](Overall-Project-ASD_files/figure-html/unnamed-chunk-26-1.png)<!-- -->
 
 ```
 ## (polygon[GRID.polygon.127], polygon[GRID.polygon.128], polygon[GRID.polygon.129], polygon[GRID.polygon.130], text[GRID.text.131], text[GRID.text.132], lines[GRID.lines.133], text[GRID.text.134], text[GRID.text.135], text[GRID.text.136])
 ```
+
 
 
 # Heatmaps
@@ -698,7 +700,7 @@ microbiome_avg_long %>%
 
 ![](Overall-Project-ASD_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
-## Age Heatmaps
+# Age Heatmaps
 
 
 ## Heatmap of the 20 most abundant genera in group A
@@ -732,4 +734,13 @@ big_demographics_B %>%
 
 ![](Overall-Project-ASD_files/figure-html/unnamed-chunk-31-1.png)<!-- -->
 
+# Conclusion
+1. The amount of both genera and species is consistently higher in the TD group than the ASD group.
 
+2. The genera abundance, while somewhat fluctuating, shows a slight decrease, then increase as the age increases. The genera abundance for males have also been shown to be higher than females in this data set.
+
+3. The typically developing group had greater diversity of genera and species. Across both groups, there was greater genus diversity in males and younger individuals compared to females and older individuals, respectively.
+
+4. The heat maps show a logarithmic trend in abundance of genera in individuals in both conditions, with few genera representing the most abundant genera.
+
+5. The heat maps also show no noticeable trend in abundance with age in either condition but a trend towards decreasing abundance in the TD group compared to the ASD group in the select genera we explored.

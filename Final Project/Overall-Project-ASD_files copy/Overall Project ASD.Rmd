@@ -1,11 +1,13 @@
 ---
-title: "Differences in the Human Gut Microbiome in Children with Autism Spectrum Disorder"
 output: 
   html_document: 
     keep_md: yes
 ---
+---
+# Differences in the Human Gut Microbiome in Children with Autism Spectrum Disorder
 
-(This space likely for notes/explaining what the project is about)
+The study by Zhou Dan et al. examines the abundances of different gut microbiome species in patients with Autism Spectrum Disorder (ASD) and without (TD). We used bar graphs, presented in a Shiny App, Venn diagrams, and heat maps, to compare the microbiome diversity of these two cohorts.
+
 
 ### Loading the libraries
 ```{r}
@@ -24,25 +26,25 @@ library(dplyr)
 
 ### Loading the .csv files
 ```{r}
-ASD_meta_adundance <- read_csv(here("Berlin/Copy_others/Ally/ASD_meta_abundance_2 copy.csv"))
-microbiome_diversity <- read_csv(here("Berlin/Copy_others/Ally/microbiome_diversity copy.csv"))
-asd_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/asd_group_tidier copy.csv"))
-td_group_tidier <- read_csv(here("Berlin/Copy_others/Ally/td_group_tidier copy.csv"))
-demographics_and_abundance <- read_csv(here("Berlin/Copy_others/Ally/demographics_and_abundance copy.csv"))
-demo_venn <- read_csv(here("Berlin/Copy_others/Ally/demo_venn copy.csv"))
-asd_B2 <- read_csv(here("Berlin/Copy_others/Ally/asd_B2 copy.csv"))
-td_A2 <- read_csv(here("Berlin/Copy_others/Ally/td_A2 copy.csv"))
-asd2 <- read_csv(here("Berlin/Copy_others/Ally/asd2 copy.csv"))
-demographics2 <- read_csv(here("Berlin/Copy_others/Ally/demographics2 copy.csv"))
-microbiome_big_diff_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_big_diff_long copy.csv"))
-microbiome_avg_long <- read_csv(here("Berlin/Copy_others/Claire/microbiome_avg_long copy.csv"))
-big_demographics_A <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_A copy.csv"))
-big_demographics_B <- read_csv(here("Berlin/Copy_others/Claire/big_demographics_B copy.csv"))
+ASD_meta_adundance <- read_csv(here("Final Project/Copy_others copy/Ally/ASD_meta_abundance_2 copy.csv"))
+microbiome_diversity <- read_csv(here("Final Project/Copy_others copy/Ally/microbiome_diversity copy.csv"))
+asd_group_tidier <- read_csv(here("Final Project/Copy_others copy/Ally/asd_group_tidier copy.csv"))
+td_group_tidier <- read_csv(here("Final Project/Copy_others copy/Ally/td_group_tidier copy.csv"))
+demographics_and_abundance <- read_csv(here("Final Project/Copy_others copy/Ally/demographics_and_abundance copy.csv"))
+demo_venn <- read_csv(here("Final Project/Copy_others copy/Ally/demo_venn copy.csv"))
+asd_B2 <- read_csv(here("Final Project/Copy_others copy/Ally/asd_B2 copy.csv"))
+td_A2 <- read_csv(here("Final Project/Copy_others copy/Ally/td_A2 copy.csv"))
+asd2 <- read_csv(here("Final Project/Copy_others copy/Ally/asd2 copy.csv"))
+demographics2 <- read_csv(here("Final Project/Copy_others copy/Ally/demographics2 copy.csv"))
+microbiome_big_diff_long <- read_csv(here("Final Project/Copy_others copy/Claire/microbiome_big_diff_long copy.csv"))
+microbiome_avg_long <- read_csv(here("Final Project/Copy_others copy/Claire/microbiome_avg_long copy.csv"))
+big_demographics_A <- read_csv(here("Final Project/Copy_others copy/Claire/big_demographics_A copy.csv"))
+big_demographics_B <- read_csv(here("Final Project/Copy_others copy/Claire/big_demographics_B copy.csv"))
 ```
 # Shiny
 
 
-## Graphs comparing Genus, Species, and Unique Counts (Unique counts not coming up for some reason)
+## Graphs comparing Genus and Species
 ```{r, eval=F, echo=T}
 ui <- fluidPage(    
   
@@ -126,8 +128,7 @@ draw.pairwise.venn(area1 = (766+3591),
 ```
 
 
-## Preparation of data for Venn Diagrams that compares genera composition between ASD and TD patients (Note: couldn't use a csv file to cut down chunks that were run because the files were too big)
-
+## Preparation of data for Venn Diagrams that compares genera composition between ASD and TD patients
 
 ### Preparing TD data:
 ```{r}
@@ -234,7 +235,6 @@ draw.pairwise.venn(area1 = 652+643,
 ```
 
 ### Preparation of data for Venn Diagrams that compares genera composition between age groups
-
 ```{r}
 age_venn <- full_join(asd2, demographics2, by = "sample_id") %>% 
   select(-c(sample_id, abundance, gender)) %>% 
@@ -263,6 +263,7 @@ age_venn_data <- list(
 ```{r}
 ggvenn(age_venn_data, fill_color = c("darkred", "deepskyblue4"))
 ```
+
 ## General Comparison of Genome Overlap between age groups to Scale
 ```{r}
 grid.newpage()
@@ -307,7 +308,7 @@ microbiome_avg_long %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
-## Age Heatmaps
+# Age Heatmaps
 
 
 ## Heatmap of the 20 most abundant genera in group A
@@ -335,4 +336,13 @@ big_demographics_B %>%
   scale_fill_gradientn(colours = mycoln, trans = "log")
 ```
 
+# Conclusion
+1. The amount of both genera and species is consistently higher in the TD group than the ASD group.
 
+2. The genera abundance, while somewhat fluctuating, shows a slight decrease, then increase as the age increases. The genera abundance for males have also been shown to be higher than females in this data set.
+
+3. The typically developing group had greater diversity of genera and species. Across both groups, there was greater genus diversity in males and younger individuals compared to females and older individuals, respectively.
+
+4. The heat maps show a logarithmic trend in abundance of genera in individuals in both conditions, with few genera representing the most abundant genera.
+
+5. The heat maps also show no noticeable trend in abundance with age in either condition but a trend towards decreasing abundance in the TD group compared to the ASD group in the select genera we explored.
